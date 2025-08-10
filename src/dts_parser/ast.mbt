@@ -43,6 +43,7 @@ pub enum Declaration {
   TypeAlias(TypeAliasDeclaration)
   Function(FunctionDeclaration)
   Variable(VariableDeclaration)
+  Class(ClassDeclaration)
   Module(ModuleDeclaration)
   Namespace(NamespaceDeclaration)
   Export(ExportDeclaration)
@@ -100,6 +101,49 @@ pub struct FunctionDeclaration {
   return_type : Type
   declare : Bool
 }
+
+pub struct ClassDeclaration {
+  name : String
+  type_params : Array[String]
+  extends : Option[String]
+  implements : Array[String]
+  members : Array[ClassMember]
+  declare : Bool
+}
+
+pub enum ClassMember {
+  ClassProperty(ClassPropertyMember)
+  ClassMethod(ClassMethodMember)
+  ClassConstructor(ClassConstructorMember)
+}
+
+pub struct ClassPropertyMember {
+  name : String
+  type_ : Type
+  visibility : Visibility
+  static : Bool
+  readonly_ : Bool
+  optional : Bool
+}
+
+pub struct ClassMethodMember {
+  name : String
+  params : Array[Parameter]
+  return_type : Type
+  visibility : Visibility
+  static : Bool
+}
+
+pub struct ClassConstructorMember {
+  params : Array[Parameter]
+  visibility : Visibility
+}
+
+pub enum Visibility {
+  Public
+  Private
+  Protected
+} derive(Eq, Show)
 
 pub struct VariableDeclaration {
   name : String

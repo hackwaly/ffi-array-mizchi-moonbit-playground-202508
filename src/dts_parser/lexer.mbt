@@ -15,6 +15,13 @@ pub enum Token {
   Enum
   Namespace
   Module
+  Constructor
+  Extends
+  Public
+  Private
+  Protected
+  Static
+  Readonly
   
   // Symbols
   LeftBrace     // {
@@ -116,6 +123,13 @@ fn lookup_keyword(ident : String) -> Token {
     "enum" => Token::Enum
     "namespace" => Token::Namespace
     "module" => Token::Module
+    "constructor" => Token::Constructor
+    "extends" => Token::Extends
+    "public" => Token::Public
+    "private" => Token::Private
+    "protected" => Token::Protected
+    "static" => Token::Static
+    "readonly" => Token::Readonly
     _ => Token::Identifier(ident)
   }
 }

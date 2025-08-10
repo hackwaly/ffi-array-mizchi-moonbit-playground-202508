@@ -376,11 +376,196 @@ fn parse_function_params(self : Parser) -> Array[Parameter] {
   params
 }
 
+// Parse class declaration
+pub fn parse_class(self : Parser) -> Option[ClassDeclaration] {
+  if not(self.current_token_is(Token::Class)) {
+    return None
+  }
+  
+  self.next_token() // Move to class name
+  let class_name = match self.current_token {
+    Identifier(name) => name
+    _ => return None
+  }
+  
+  self.next_token() // Move past class name
+  
+  // Check for extends clause
+  let extends = if self.current_token_is(Token::Extends) {
+    self.next_token() // Move past extends
+    match self.current_token {
+      Identifier(base) => {
+        self.next_token() // Move past base class name
+        Some(base)
+      }
+      _ => None
+    }
+  } else {
+    None
+  }
+  
+  // Parse class body
+  if not(self.current_token_is(Token::LeftBrace)) {
+    return None
+  }
+  
+  let members : Array[ClassMember] = []
+  self.next_token() // Move past {
+  
+  while not(self.current_token_is(Token::RightBrace)) && not(self.current_token_is(Token::Eof)) {
+    match self.parse_class_member() {
+      Some(member) => members.push(member)
+      None => break
+    }
+    
+    // Skip optional semicolon
+    if self.current_token_is(Token::Semicolon) {
+      self.next_token()
+    } else if not(self.current_token_is(Token::RightBrace)) {
+      self.next_token()
+    }
+  }
+  
+  Some(ClassDeclaration::{
+    name: class_name,
+    type_params: [],
+    extends,
+    implements: [],
+    members,
+    declare: false
+  })
+}
+
+// Parse class member
+fn parse_class_member(self : Parser) -> Option[ClassMember] {
+  // Check for visibility modifier
+  let visibility = match self.current_token {
+    Public => {
+      self.next_token()
+      Visibility::Public
+    }
+    Private => {
+      self.next_token()
+      Visibility::Private
+    }
+    Protected => {
+      self.next_token()
+      Visibility::Protected
+    }
+    _ => Visibility::Public
+  }
+  
+  // Check for static modifier
+  let is_static = if self.current_token_is(Token::Static) {
+    self.next_token()
+    true
+  } else {
+    false
+  }
+  
+  // Check for readonly modifier
+  let is_readonly = if self.current_token_is(Token::Readonly) {
+    self.next_token()
+    true
+  } else {
+    false
+  }
+  
+  // Check for constructor
+  if self.current_token_is(Token::Constructor) {
+    self.next_token() // Move past constructor
+    if not(self.current_token_is(Token::LeftParen)) {
+      return None
+    }
+    let params = self.parse_function_params()
+    
+    // Move past closing paren if present
+    if self.current_token_is(Token::RightParen) {
+      self.next_token()
+    }
+    
+    return Some(ClassMember::ClassConstructor(ClassConstructorMember::{
+      params,
+      visibility
+    }))
+  }
+  
+  // Parse property or method
+  match self.current_token {
+    Identifier(name) => {
+      let member_name = name
+      
+      // Check if it's a method (has parentheses)
+      if self.peek_token_is(Token::LeftParen) {
+        self.next_token() // Move to (
+        let params = self.parse_function_params()
+        
+        // Move past closing paren if present
+        if self.current_token_is(Token::RightParen) {
+          self.next_token()
+        }
+        
+        // Parse return type if present
+        let return_type = if self.current_token_is(Token::Colon) {
+          self.next_token() // Move past :
+          match self.parse_type() {
+            Some(typ) => {
+              self.next_token() // Move past the type
+              typ
+            }
+            None => Type::Void
+          }
+        } else {
+          Type::Void
+        }
+        
+        Some(ClassMember::ClassMethod(ClassMethodMember::{
+          name: member_name,
+          params,
+          return_type,
+          visibility,
+          static: is_static
+        }))
+      } else {
+        // It's a property
+        let is_optional = if self.peek_token_is(Token::Question) {
+          self.next_token() // consume ?
+          true
+        } else {
+          false
+        }
+        
+        if not(self.expect_peek(Token::Colon)) {
+          return None
+        }
+        
+        self.next_token() // move to type
+        match self.parse_type() {
+          Some(prop_type) => {
+            self.next_token() // Move past the type
+            Some(ClassMember::ClassProperty(ClassPropertyMember::{
+              name: member_name,
+              type_: prop_type,
+              visibility,
+              static: is_static,
+              readonly_: is_readonly,
+              optional: is_optional
+            }))
+          }
+          None => None
+        }
+      }
+    }
+    _ => None
+  }
+}
+
 // Parse top-level declaration
 pub fn parse_declaration(self : Parser) -> Option[Declaration] {
   match self.current_token {
     Interface => self.parse_interface().map(fn(iface) { Declaration::Interface(iface) })
     Function => self.parse_function_declaration().map(fn(func) { Declaration::Function(func) })
+    Class => self.parse_class().map(fn(cls) { Declaration::Class(cls) })
     Export => {
       self.next_token() // Move past export
       match self.parse_declaration() {
