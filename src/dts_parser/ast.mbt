@@ -18,25 +18,25 @@ pub enum Type {
   Function(FunctionType)
   Optional(Type)
   Readonly(Type)
-}
+} derive(Show)
 
 pub enum LiteralType {
   String(String)
   Number(String)
   Boolean(Bool)
-}
+} derive(Show)
 
 pub struct FunctionType {
   params : Array[Parameter]
   return_type : Type
-}
+} derive(Show)
 
 pub struct Parameter {
   name : String
   type_ : Type
   optional : Bool
   rest : Bool
-}
+} derive(Show)
 
 pub enum Declaration {
   Interface(InterfaceDeclaration)

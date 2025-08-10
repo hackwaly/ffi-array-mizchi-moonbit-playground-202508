@@ -1,6 +1,8 @@
 pub enum Token {
   // Literals and identifiers
   Identifier(String)
+  StringLiteral(String)  // 文字列リテラル
+  NumberLiteral(String)  // 数値リテラル
   
   // Keywords
   Interface
@@ -22,6 +24,10 @@ pub enum Token {
   Protected
   Static
   Readonly
+  Async     // async キーワード
+  Implements // implements キーワード
+  From      // from キーワード
+  As        // as キーワード
   
   // Symbols
   LeftBrace     // {
@@ -39,6 +45,9 @@ pub enum Token {
   Question      // ?
   Pipe          // |
   Ampersand     // &
+  LessThan      // <
+  GreaterThan   // >
+  Star          // *
   
   // Special
   Eof
@@ -73,9 +82,73 @@ fn skip_whitespace(self : Lexer) -> Unit {
       Some(ch) => {
         if ch == ' ' || ch == '\t' || ch == '\r' || ch == '\n' {
           self.advance()
+        } else if ch == '/' {
+          // コメントの可能性をチェック
+          let next_pos = self.position + 1
+          if next_pos < self.input.length() {
+            let next_ch = Int::unsafe_to_char(self.input[next_pos])
+            if next_ch == '/' {
+              // 行コメント
+              self.skip_line_comment()
+            } else if next_ch == '*' {
+              // ブロックコメント
+              self.skip_block_comment()
+            } else {
+              break
+            }
+          } else {
+            break
+          }
         } else {
           break
         }
+      }
+      None => break
+    }
+  }
+}
+
+fn skip_line_comment(self : Lexer) -> Unit {
+  // // をスキップ
+  self.advance()
+  self.advance()
+  
+  // 改行まで読み飛ばす
+  while true {
+    match self.current_char() {
+      Some(ch) => {
+        if ch == '\n' {
+          self.advance()
+          break
+        }
+        self.advance()
+      }
+      None => break
+    }
+  }
+}
+
+fn skip_block_comment(self : Lexer) -> Unit {
+  // /* をスキップ
+  self.advance()
+  self.advance()
+  
+  // */ まで読み飛ばす
+  while true {
+    match self.current_char() {
+      Some(ch) => {
+        if ch == '*' {
+          let next_pos = self.position + 1
+          if next_pos < self.input.length() {
+            let next_ch = Int::unsafe_to_char(self.input[next_pos])
+            if next_ch == '/' {
+              self.advance()
+              self.advance()
+              break
+            }
+          }
+        }
+        self.advance()
       }
       None => break
     }
@@ -88,7 +161,7 @@ fn read_identifier(self : Lexer) -> String {
   while true {
     match self.current_char() {
       Some(ch) => {
-        if is_letter(ch) || is_digit(ch) || ch == '_' {
+        if is_letter(ch) || is_digit(ch) || ch == '_' || ch == '$' {
           self.advance()
         } else {
           break
@@ -97,6 +170,171 @@ fn read_identifier(self : Lexer) -> String {
       None => break
     }
   }
+  self.input.substring(start=start, end=self.position)
+}
+
+fn read_string(self : Lexer, quote : Char) -> String {
+  let start = self.position
+  self.advance() // Skip opening quote
+  
+  while true {
+    match self.current_char() {
+      Some(ch) => {
+        if ch == quote {
+          let result = self.input.substring(start=start + 1, end=self.position)
+          self.advance() // Skip closing quote
+          return result
+        } else if ch == '\\' {
+          // エスケープシーケンスをスキップ
+          self.advance()
+          if self.position < self.input.length() {
+            self.advance()
+          }
+        } else {
+          self.advance()
+        }
+      }
+      None => break
+    }
+  }
+  self.input.substring(start=start + 1, end=self.position)
+}
+
+fn read_template_literal(self : Lexer) -> String {
+  let start = self.position
+  self.advance() // Skip opening backtick
+  
+  while true {
+    match self.current_char() {
+      Some(ch) => {
+        if ch == '`' {
+          let result = self.input.substring(start=start + 1, end=self.position)
+          self.advance() // Skip closing backtick
+          return result
+        } else if ch == '\\' {
+          // エスケープシーケンスをスキップ
+          self.advance()
+          if self.position < self.input.length() {
+            self.advance()
+          }
+        } else if ch == '$' {
+          // テンプレート式の可能性をチェック
+          let next_pos = self.position + 1
+          if next_pos < self.input.length() {
+            let next_ch = Int::unsafe_to_char(self.input[next_pos])
+            if next_ch == '{' {
+              // ${...} をスキップ
+              self.skip_template_expression()
+            } else {
+              self.advance()
+            }
+          } else {
+            self.advance()
+          }
+        } else {
+          self.advance()
+        }
+      }
+      None => break
+    }
+  }
+  self.input.substring(start=start + 1, end=self.position)
+}
+
+fn skip_template_expression(self : Lexer) -> Unit {
+  // ${ をスキップ
+  self.advance()
+  self.advance()
+  
+  let mut brace_count = 1
+  while brace_count > 0 {
+    match self.current_char() {
+      Some(ch) => {
+        if ch == '{' {
+          brace_count += 1
+        } else if ch == '}' {
+          brace_count -= 1
+        } else if ch == '"' || ch == '\'' {
+          let _ = self.read_string(ch)
+          continue
+        } else if ch == '`' {
+          let _ = self.read_template_literal()
+          continue
+        }
+        self.advance()
+      }
+      None => break
+    }
+  }
+}
+
+fn read_number(self : Lexer) -> String {
+  let start = self.position
+  
+  // 整数部分
+  while true {
+    match self.current_char() {
+      Some(ch) => {
+        if is_digit(ch) {
+          self.advance()
+        } else {
+          break
+        }
+      }
+      None => break
+    }
+  }
+  
+  // 小数点と小数部分
+  match self.current_char() {
+    Some('.') => {
+      let next_pos = self.position + 1
+      if next_pos < self.input.length() {
+        let next_ch = Int::unsafe_to_char(self.input[next_pos])
+        if is_digit(next_ch) {
+          self.advance() // Skip '.'
+          while true {
+            match self.current_char() {
+              Some(ch) => {
+                if is_digit(ch) {
+                  self.advance()
+                } else {
+                  break
+                }
+              }
+              None => break
+            }
+          }
+        }
+      }
+    }
+    _ => ()
+  }
+  
+  // 指数部分
+  match self.current_char() {
+    Some(ch) if ch == 'e' || ch == 'E' => {
+      self.advance()
+      match self.current_char() {
+        Some(sign) if sign == '+' || sign == '-' => self.advance()
+        _ => ()
+      }
+      while true {
+        match self.current_char() {
+          Some(ch) => {
+            if is_digit(ch) {
+              self.advance()
+            } else {
+              break
+            }
+          }
+          None => break
+        }
+      }
+    }
+    _ => ()
+  }
+  
   self.input.substring(start=start, end=self.position)
 }
 
@@ -125,11 +363,15 @@ fn lookup_keyword(ident : String) -> Token {
     "module" => Token::Module
     "constructor" => Token::Constructor
     "extends" => Token::Extends
+    "implements" => Token::Implements
     "public" => Token::Public
     "private" => Token::Private
     "protected" => Token::Protected
     "static" => Token::Static
     "readonly" => Token::Readonly
+    "async" => Token::Async
+    "from" => Token::From
+    "as" => Token::As
     _ => Token::Identifier(ident)
   }
 }
@@ -140,9 +382,18 @@ pub fn Lexer::next_token(self : Lexer) -> Token {
   match self.current_char() {
     None => Token::Eof
     Some(ch) => {
-      if is_letter(ch) || ch == '_' {
+      if is_letter(ch) || ch == '_' || ch == '$' {
         let ident = self.read_identifier()
         lookup_keyword(ident)
+      } else if is_digit(ch) {
+        let num = self.read_number()
+        Token::NumberLiteral(num)
+      } else if ch == '"' || ch == '\'' {
+        let str = self.read_string(ch)
+        Token::StringLiteral(str)
+      } else if ch == '`' {
+        let str = self.read_template_literal()
+        Token::StringLiteral(str)
       } else {
         let token = match ch {
           '{' => Token::LeftBrace
@@ -158,6 +409,9 @@ pub fn Lexer::next_token(self : Lexer) -> Token {
           '?' => Token::Question
           '|' => Token::Pipe
           '&' => Token::Ampersand
+          '<' => Token::LessThan
+          '>' => Token::GreaterThan
+          '*' => Token::Star
           '=' => {
             self.advance()
             match self.current_char() {
