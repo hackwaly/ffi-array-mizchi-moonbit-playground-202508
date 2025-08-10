@@ -4,3 +4,4 @@ target/
 
 # lsmcp cache
 .lsmcp/cache
+tmp/
