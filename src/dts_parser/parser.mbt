@@ -46,6 +46,10 @@ pub fn parse_type(self : Parser) -> Option[Type] {
       // Function type: (params) => return
       return self.parse_function_type()
     }
+    LeftBrace => {
+      // Object type: { key: type, ... }
+      return self.parse_object_type()
+    }
     Identifier(name) => {
       match name {
         "string" => Some(Type::String)
@@ -91,6 +95,53 @@ pub fn parse_type(self : Parser) -> Option[Type] {
     }
     None => None
   }
+}
+
+// Parse object type: { key: type, ... }
+fn parse_object_type(self : Parser) -> Option[Type] {
+  if not(self.current_token_is(Token::LeftBrace)) {
+    return None
+  }
+  
+  let props : Map[String, Type] = Map::new()
+  self.next_token() // consume {
+  
+  while not(self.current_token_is(Token::RightBrace)) && not(self.current_token_is(Token::Eof)) {
+    // Parse property name
+    let prop_name = match self.current_token {
+      Identifier(name) => name
+      _ => return None
+    }
+    
+    // Expect colon
+    if not(self.expect_peek(Token::Colon)) {
+      return None
+    }
+    
+    self.next_token() // move to type
+    // Parse property type
+    match self.parse_type() {
+      Some(prop_type) => {
+        props.set(prop_name, prop_type)
+        self.next_token() // Move past the type
+      }
+      None => return None
+    }
+    
+    // Check for comma or semicolon separator
+    if self.current_token_is(Token::Comma) || self.current_token_is(Token::Semicolon) {
+      self.next_token() // move to next property
+    } else if not(self.current_token_is(Token::RightBrace)) {
+      // If not separator and not closing brace, something is wrong
+      break
+    }
+  }
+  
+  if not(self.current_token_is(Token::RightBrace)) {
+    return None
+  }
+  
+  Some(Type::Object(props))
 }
 
 // Parse function type: (params) => return
