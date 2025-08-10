@@ -1,0 +1,6 @@
+{
+  "preset": "moonbit",
+  "indexFiles": [
+    "**/*.mbt"
+  ]
+}
