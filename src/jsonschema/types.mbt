@@ -13,78 +13,78 @@ pub enum SchemaType {
 
 pub struct Schema {
   // JSON Schema 2020-12 meta-schema properties
-  mut schema_uri : Option[String] // $schema
-  mut id : Option[String] // $id
-  mut anchor : Option[String] // $anchor
-  mut ref_ : Option[String] // $ref
-  mut defs : Option[Map[String, Schema]] // $defs
-  mut vocabulary : Option[Map[String, Bool]] // $vocabulary
-  mut comment : Option[String] // $comment
+  schema_uri : Option[String] // $schema
+  id : Option[String] // $id
+  anchor : Option[String] // $anchor
+  ref_ : Option[String] // $ref
+  defs : Option[Map[String, Schema]] // $defs
+  vocabulary : Option[Map[String, Bool]] // $vocabulary
+  comment : Option[String] // $comment
   
   // Type constraints
-  mut type_ : Option[SchemaType]
-  mut types : Option[Array[SchemaType]]
+  type_ : Option[SchemaType]
+  types : Option[Array[SchemaType]]
   
   // Common validations
-  mut enum_ : Option[Array[Json]]
-  mut const_ : Option[Json]
+  enum_ : Option[Array[Json]]
+  const_ : Option[Json]
   
   // Numeric validations
-  mut minimum : Option[Double]
-  mut maximum : Option[Double]
-  mut exclusive_minimum : Option[Double]
-  mut exclusive_maximum : Option[Double]
-  mut multiple_of : Option[Double]
+  minimum : Option[Double]
+  maximum : Option[Double]
+  exclusive_minimum : Option[Double]
+  exclusive_maximum : Option[Double]
+  multiple_of : Option[Double]
   
   // String validations
-  mut min_length : Option[Int]
-  mut max_length : Option[Int]
-  mut pattern : Option[String]
-  mut format : Option[String]
-  mut content_encoding : Option[String]
-  mut content_media_type : Option[String]
-  mut content_schema : Option[Schema]
+  min_length : Option[Int]
+  max_length : Option[Int]
+  pattern : Option[String]
+  format : Option[String]
+  content_encoding : Option[String]
+  content_media_type : Option[String]
+  content_schema : Option[Schema]
   
   // Array validations
-  mut items : Option[Schema]
-  mut prefix_items : Option[Array[Schema]] // New in 2020-12
-  mut contains : Option[Schema]
-  mut min_contains : Option[Int] // New in 2019-09
-  mut max_contains : Option[Int] // New in 2019-09
-  mut min_items : Option[Int]
-  mut max_items : Option[Int]
-  mut unique_items : Option[Bool]
+  items : Option[Schema]
+  prefix_items : Option[Array[Schema]] // New in 2020-12
+  contains : Option[Schema]
+  min_contains : Option[Int] // New in 2019-09
+  max_contains : Option[Int] // New in 2019-09
+  min_items : Option[Int]
+  max_items : Option[Int]
+  unique_items : Option[Bool]
   
   // Object validations
-  mut properties : Option[Map[String, Schema]]
-  mut required : Option[Array[String]]
-  mut additional_properties : Option[Schema]
-  mut pattern_properties : Option[Map[String, Schema]]
-  mut property_names : Option[Schema]
-  mut dependent_schemas : Option[Map[String, Schema]] // Replaces dependencies
-  mut dependent_required : Option[Map[String, Array[String]]] // Replaces dependencies
-  mut min_properties : Option[Int]
-  mut max_properties : Option[Int]
+  properties : Option[Map[String, Schema]]
+  required : Option[Array[String]]
+  additional_properties : Option[Schema]
+  pattern_properties : Option[Map[String, Schema]]
+  property_names : Option[Schema]
+  dependent_schemas : Option[Map[String, Schema]] // Replaces dependencies
+  dependent_required : Option[Map[String, Array[String]]] // Replaces dependencies
+  min_properties : Option[Int]
+  max_properties : Option[Int]
   
   // Logical operations
-  mut all_of : Option[Array[Schema]]
-  mut any_of : Option[Array[Schema]]
-  mut one_of : Option[Array[Schema]]
-  mut not_ : Option[Schema]
+  all_of : Option[Array[Schema]]
+  any_of : Option[Array[Schema]]
+  one_of : Option[Array[Schema]]
+  not_ : Option[Schema]
   
   // Conditional
-  mut if_ : Option[Schema]
-  mut then_ : Option[Schema]
-  mut else_ : Option[Schema]
+  if_ : Option[Schema]
+  then_ : Option[Schema]
+  else_ : Option[Schema]
   
   // Metadata
-  mut title : Option[String]
-  mut description : Option[String]
-  mut default : Option[Json]
-  mut examples : Option[Array[Json]]
-  mut deprecated : Option[Bool] // New in 2019-09
-  mut read_only : Option[Bool]
-  mut write_only : Option[Bool]
+  title : Option[String]
+  description : Option[String]
+  default : Option[Json]
+  examples : Option[Array[Json]]
+  deprecated : Option[Bool] // New in 2019-09
+  read_only : Option[Bool]
+  write_only : Option[Bool]
 }
 
 pub fn Schema::new() -> Schema {
