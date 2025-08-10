@@ -1,5 +1,39 @@
 pub enum Token {
+  // Literals and identifiers
   Identifier(String)
+  
+  // Keywords
+  Interface
+  Function
+  Const
+  Let
+  Var
+  Export
+  Import
+  Type
+  Class
+  Enum
+  Namespace
+  Module
+  
+  // Symbols
+  LeftBrace     // {
+  RightBrace    // }
+  LeftParen     // (
+  RightParen    // )
+  LeftBracket   // [
+  RightBracket  // ]
+  Semicolon     // ;
+  Colon         // :
+  Comma         // ,
+  Dot           // .
+  Arrow         // =>
+  Equals        // =
+  Question      // ?
+  Pipe          // |
+  Ampersand     // &
+  
+  // Special
   Eof
 } derive(Eq, Show)
 
@@ -68,6 +102,24 @@ fn is_digit(ch : Char) -> Bool {
   ch.to_int() >= '0'.to_int() && ch.to_int() <= '9'.to_int()
 }
 
+fn lookup_keyword(ident : String) -> Token {
+  match ident {
+    "interface" => Token::Interface
+    "function" => Token::Function
+    "const" => Token::Const
+    "let" => Token::Let
+    "var" => Token::Var
+    "export" => Token::Export
+    "import" => Token::Import
+    "type" => Token::Type
+    "class" => Token::Class
+    "enum" => Token::Enum
+    "namespace" => Token::Namespace
+    "module" => Token::Module
+    _ => Token::Identifier(ident)
+  }
+}
+
 pub fn Lexer::next_token(self : Lexer) -> Token {
   self.skip_whitespace()
   
@@ -75,10 +127,40 @@ pub fn Lexer::next_token(self : Lexer) -> Token {
     None => Token::Eof
     Some(ch) => {
       if is_letter(ch) || ch == '_' {
-        Token::Identifier(self.read_identifier())
+        let ident = self.read_identifier()
+        lookup_keyword(ident)
       } else {
+        let token = match ch {
+          '{' => Token::LeftBrace
+          '}' => Token::RightBrace
+          '(' => Token::LeftParen
+          ')' => Token::RightParen
+          '[' => Token::LeftBracket
+          ']' => Token::RightBracket
+          ';' => Token::Semicolon
+          ':' => Token::Colon
+          ',' => Token::Comma
+          '.' => Token::Dot
+          '?' => Token::Question
+          '|' => Token::Pipe
+          '&' => Token::Ampersand
+          '=' => {
+            self.advance()
+            match self.current_char() {
+              Some('>') => {
+                self.advance()
+                return Token::Arrow
+              }
+              _ => return Token::Equals
+            }
+          }
+          _ => {
+            self.advance()
+            return self.next_token()
+          }
+        }
         self.advance()
-        self.next_token()
+        token
       }
     }
   }
