@@ -1,3 +1,7 @@
 {
-  "import": []
+  "targets": {
+    "runtime_js.mbt": ["js"],
+    "runtime_wasm_gc.mbt": ["wasm-gc"],
+    "runtime_wasm.mbt": ["wasm"]
+  }
 }

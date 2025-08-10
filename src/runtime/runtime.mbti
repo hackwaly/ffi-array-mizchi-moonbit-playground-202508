@@ -1,0 +1,9 @@
+// Runtime interface file
+// This file defines the public interface that all backends must implement
+
+pub struct Runtime
+
+pub fn Runtime::new() -> Runtime
+pub fn log(Runtime, String) -> Unit
+pub fn error(Runtime, String) -> Unit  
+pub fn now(Runtime) -> Int64
