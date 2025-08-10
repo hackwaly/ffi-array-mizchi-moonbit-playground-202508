@@ -414,7 +414,7 @@ pub fn parse_class(self : Parser) -> Option[ClassDeclaration] {
   
   while not(self.current_token_is(Token::RightBrace)) && not(self.current_token_is(Token::Eof)) {
     match self.parse_class_member() {
-      Some(member) => members.push(member)
+      Some(class_mem) => members.push(class_mem)
       None => break
     }
     
@@ -456,7 +456,7 @@ fn parse_class_member(self : Parser) -> Option[ClassMember] {
   }
   
   // Check for static modifier
-  let is_static = if self.current_token_is(Token::Static) {
+  let is_static_member = if self.current_token_is(Token::Static) {
     self.next_token()
     true
   } else {
@@ -524,7 +524,7 @@ fn parse_class_member(self : Parser) -> Option[ClassMember] {
           params,
           return_type,
           visibility,
-          static: is_static
+          is_static: is_static_member
         }))
       } else {
         // It's a property
@@ -547,7 +547,7 @@ fn parse_class_member(self : Parser) -> Option[ClassMember] {
               name: member_name,
               type_: prop_type,
               visibility,
-              static: is_static,
+              is_static: is_static_member,
               readonly_: is_readonly,
               optional: is_optional
             }))

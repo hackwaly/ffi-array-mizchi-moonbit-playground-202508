@@ -121,7 +121,7 @@ pub struct ClassPropertyMember {
   name : String
   type_ : Type
   visibility : Visibility
-  static : Bool
+  is_static : Bool
   readonly_ : Bool
   optional : Bool
 }
@@ -131,7 +131,7 @@ pub struct ClassMethodMember {
   params : Array[Parameter]
   return_type : Type
   visibility : Visibility
-  static : Bool
+  is_static : Bool
 }
 
 pub struct ClassConstructorMember {

@@ -9,17 +9,17 @@ pub fn Runtime::new() -> Runtime {
 }
 
 // Public interface implementation
-pub fn log(self : Runtime, message : String) -> Unit {
+pub fn log(_self : Runtime, message : String) -> Unit {
   // In a real implementation, this might use WASI or imported functions
   // For now, we use println which works in wasm-gc
   println(message)
 }
 
-pub fn error(self : Runtime, message : String) -> Unit {
+pub fn error(_self : Runtime, message : String) -> Unit {
   println("ERROR: " + message)
 }
 
-pub fn now(self : Runtime) -> Int64 {
+pub fn now(_self : Runtime) -> Int64 {
   // Return a dummy timestamp for now
   // In a real implementation, this would use WASI clock functions
   0L
@@ -27,12 +27,12 @@ pub fn now(self : Runtime) -> Int64 {
 
 // Tests
 test "runtime can be created" {
-  let runtime = Runtime::new()
+  let _runtime = Runtime::new()
   assert_true(true)
 }
 
 test "runtime can log" {
   let runtime = Runtime::new()
-  runtime.log("test message from WasmGC")
+  log(runtime, "test message from WasmGC")
   assert_true(true)
 }
