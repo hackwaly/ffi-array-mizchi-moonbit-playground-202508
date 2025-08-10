@@ -94,29 +94,29 @@ MIT
 
 ## DTS parser subset for sample-bindings.ts
 
-本リポジトリには、TypeScript の最小サブセットから Moonbit 向け FFI コードを生成する dts_parser 実装が含まれます。このサブセットは [sample-bindings.ts](sample-bindings.ts) をカバーし、実装は以下のパーサ/コード生成/テストに基づきます。
+本リポジトリには、TypeScript の最小サブセットから Moonbit 向け FFI コードを生成する ts_parser 実装が含まれます。このサブセットは [sample-bindings.ts](sample-bindings.ts) をカバーし、実装は以下のパーサ/コード生成/テストに基づきます。
 
-- パーサ中核: [Parser::parse_type()](src/dts_parser/parser.mbt:51), [Parser::parse_qualified_name()](src/dts_parser/parser.mbt:335), [Parser::parse_type_arguments()](src/dts_parser/parser.mbt:355), [Parser::parse_function_declaration()](src/dts_parser/parser.mbt:444), [Parser::parse_import_declaration()](src/dts_parser/parser.mbt:961)
-- AST 型: [Type](src/dts_parser/ast.mbt)
-- コード生成 API: [type_to_moonbit()](src/dts_parser/codegen.mbt:6), [generate_function_binding()](src/dts_parser/codegen.mbt:151), [generate_type_alias_binding()](src/dts_parser/codegen.mbt:272), [generate_ffi_code()](src/dts_parser/codegen.mbt:293)
+- パーサ中核: [Parser::parse_type()](src/ts_parser/parser.mbt:51), [Parser::parse_qualified_name()](src/ts_parser/parser.mbt:335), [Parser::parse_type_arguments()](src/ts_parser/parser.mbt:355), [Parser::parse_function_declaration()](src/ts_parser/parser.mbt:444), [Parser::parse_import_declaration()](src/ts_parser/parser.mbt:961)
+- AST 型: [Type](src/ts_parser/ast.mbt)
+- コード生成 API: [type_to_moonbit()](src/ts_parser/codegen.mbt:6), [generate_function_binding()](src/ts_parser/codegen.mbt:151), [generate_type_alias_binding()](src/ts_parser/codegen.mbt:272), [generate_ffi_code()](src/ts_parser/codegen.mbt:293)
 
 ### 1) 概要
 
-- 本 dts_parser は TypeScript のサブセットを対象に、FFI 用の Moonbit コードを生成します。
+- 本 ts_parser は TypeScript のサブセットを対象に、FFI 用の Moonbit コードを生成します。
 - サブセットは [sample-bindings.ts](sample-bindings.ts) の記述をカバーします（型とシグネチャ情報に限定）。
 
 ### 2) 対応サブセット（構文仕様）
 
 - Import（型名前空間）:
-  - `import type * as X from "path";`（TypeScript の type import を許容。実装は名前空間 import を受理） — 解析: [Parser::parse_import_declaration()](src/dts_parser/parser.mbt:961)
+  - `import type * as X from "path";`（TypeScript の type import を許容。実装は名前空間 import を受理） — 解析: [Parser::parse_import_declaration()](src/ts_parser/parser.mbt:961)
 - 型エイリアス:
   - `export type Name = { prop: QualifiedType; ... }`（メンバは `;` 区切り、末尾 `;` 任意）
 - 関数宣言:
-  - `export [async] function name(params...): ReturnType { ... }` — 解析: [Parser::parse_function_declaration()](src/dts_parser/parser.mbt:444)
+  - `export [async] function name(params...): ReturnType { ... }` — 解析: [Parser::parse_function_declaration()](src/ts_parser/parser.mbt:444)
   - 戻り型・パラメータ型は以下を許容: QualifiedType | TypeName | `Promise&lt;T&gt;` | `void`
 - QualifiedType:
-  - `Ident("." Ident)*`（例: `mbt.Int`, `foo.bar.Baz`） — 解析: [Parser::parse_qualified_name()](src/dts_parser/parser.mbt:335), 型引数: [Parser::parse_type_arguments()](src/dts_parser/parser.mbt:355)
-- 関数本体はパース時にスキップ（型情報のみ抽出） — 実装: [Parser::skip_function_body()](src/dts_parser/parser.mbt:518)
+  - `Ident("." Ident)*`（例: `mbt.Int`, `foo.bar.Baz`） — 解析: [Parser::parse_qualified_name()](src/ts_parser/parser.mbt:335), 型引数: [Parser::parse_type_arguments()](src/ts_parser/parser.mbt:355)
+- 関数本体はパース時にスキップ（型情報のみ抽出） — 実装: [Parser::skip_function_body()](src/ts_parser/parser.mbt:518)
 
 ### 3) 型マッピング（Moonbit 側）
 
@@ -131,10 +131,10 @@ MIT
   - `mbt.Float` → `Double`
   - `mbt.Void` → `Unit`
   - 上記以外の `mbt.Xxx` → `Xxx`（末尾名にフォールバック）、型引数は保持
-  - 実装: [type_to_moonbit()](src/dts_parser/codegen.mbt:6)
+  - 実装: [type_to_moonbit()](src/ts_parser/codegen.mbt:6)
 - Promise:
   - `Promise&lt;T&gt;` → `Promise[map(T)]`（`map` は上記の Moonbit 型変換）
-  - `async` 関数で戻りが既に `Promise&lt;T&gt;` の場合は二重 Promise にしない — 判定は [Parser::parse_function_declaration()](src/dts_parser/parser.mbt:444) で実施
+  - `async` 関数で戻りが既に `Promise&lt;T&gt;` の場合は二重 Promise にしない — 判定は [Parser::parse_function_declaration()](src/ts_parser/parser.mbt:444) で実施
 
 ### 4) 生成されるコード例（sample の要旨）
 
@@ -153,7 +153,7 @@ extern "js" fn readFile(path : String) -> Promise[String] = #|readFile|#
 extern "js" fn writeFile(path : String, content : String) -> Promise[Unit] = #|writeFile|#
 ```
 
-一括生成のエントリポイント: [generate_ffi_code()](src/dts_parser/codegen.mbt:293)
+一括生成のエントリポイント: [generate_ffi_code()](src/ts_parser/codegen.mbt:293)
 
 ### 5) 実行/テスト
 
@@ -163,13 +163,13 @@ extern "js" fn writeFile(path : String, content : String) -> Promise[Unit] = #|w
     ```
 - 代表テスト:
   - Qualified/Promise の解析:
-    - [src/dts_parser/parser_qualified_test.mbt](src/dts_parser/parser_qualified_test.mbt)
-    - [src/dts_parser/parser_promise_test.mbt](src/dts_parser/parser_promise_test.mbt)
-    - [src/dts_parser/import_type_ns_test.mbt](src/dts_parser/import_type_ns_test.mbt)
+    - [src/ts_parser/parser_qualified_test.mbt](src/ts_parser/parser_qualified_test.mbt)
+    - [src/ts_parser/parser_promise_test.mbt](src/ts_parser/parser_promise_test.mbt)
+    - [src/ts_parser/import_type_ns_test.mbt](src/ts_parser/import_type_ns_test.mbt)
   - 生成とマッピング:
-    - [src/dts_parser/codegen_mbt_prefix_test.mbt](src/dts_parser/codegen_mbt_prefix_test.mbt)
+    - [src/ts_parser/codegen_mbt_prefix_test.mbt](src/ts_parser/codegen_mbt_prefix_test.mbt)
   - サンプル統合:
-    - [src/dts_parser/sample_bindings_integration_test.mbt](src/dts_parser/sample_bindings_integration_test.mbt)
+    - [src/ts_parser/sample_bindings_integration_test.mbt](src/ts_parser/sample_bindings_integration_test.mbt)
 
 ### 6) 制限事項（今後の拡張候補）
 
@@ -177,4 +177,4 @@ extern "js" fn writeFile(path : String, content : String) -> Promise[Unit] = #|w
   - 複雑なジェネリクス束縛、条件型、型演算
   - インターフェイス継承の詳細
   - 名前解決（import の型空間追跡などの厳密解決）
-- codegen は当サブセット向けの最小変換に留める（Union/Intersection は簡略化など）— 実装の簡略化は [type_to_moonbit()](src/dts_parser/codegen.mbt:6) 内コメント参照
+- codegen は当サブセット向けの最小変換に留める（Union/Intersection は簡略化など）— 実装の簡略化は [type_to_moonbit()](src/ts_parser/codegen.mbt:6) 内コメント参照

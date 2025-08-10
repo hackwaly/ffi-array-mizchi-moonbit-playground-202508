@@ -1,5 +1,5 @@
 // This file is
-import type * as mbt from "./target/js/release/build/main/moonbit.d.ts";
+import type * as mbt from "./target/js/release/build/cli/moonbit.d.ts";
 
 export type Point = {
   x: mbt.Int;

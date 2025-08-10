@@ -2,42 +2,46 @@
 // This file exports functions to be called from JavaScript/TypeScript
 
 // Parse TypeScript code and return AST as JSON
+///|
 pub fn parse_typescript(code : String) -> String {
-  let lexer = @dts_parser.Lexer::new(code)
-  let parser = @dts_parser.Parser::new(lexer)
+  let lexer = @ts_parser.Lexer::new(code)
+  let parser = @ts_parser.Parser::new(lexer)
   let declarations = parser.parse_typescript_file()
-  
+
   // Convert AST to JSON string
   declarations_to_json(declarations)
 }
 
 // Generate FFI bindings from TypeScript code
+
+///|
 pub fn generate_ffi(code : String) -> String {
-  let lexer = @dts_parser.Lexer::new(code)
-  let parser = @dts_parser.Parser::new(lexer)
+  let lexer = @ts_parser.Lexer::new(code)
+  let parser = @ts_parser.Parser::new(lexer)
   let declarations = parser.parse_typescript_file()
-  
-  @dts_parser.generate_ffi_code(declarations)
+  @ts_parser.generate_ffi_code(declarations)
 }
 
 // Helper function to convert declarations to JSON
-fn declarations_to_json(declarations : Array[@dts_parser.Declaration]) -> String {
+
+///|
+fn declarations_to_json(declarations : Array[@ts_parser.Declaration]) -> String {
   let result = StringBuilder::new()
   result.write_string("[")
-  
   for i, decl in declarations {
     if i > 0 {
       result.write_string(",")
     }
     result.write_string(declaration_to_json(decl))
   }
-  
   result.write_string("]")
   result.to_string()
 }
 
 // Convert a single declaration to JSON
-fn declaration_to_json(decl : @dts_parser.Declaration) -> String {
+
+///|
+fn declaration_to_json(decl : @ts_parser.Declaration) -> String {
   match decl {
     Interface(iface) => {
       let json = StringBuilder::new()
@@ -127,6 +131,8 @@ fn declaration_to_json(decl : @dts_parser.Declaration) -> String {
 }
 
 // Helper to convert string array to JSON
+
+///|
 fn string_array_to_json(arr : Array[String]) -> String {
   let result = StringBuilder::new()
   result.write_string("[")
@@ -143,7 +149,9 @@ fn string_array_to_json(arr : Array[String]) -> String {
 }
 
 // Convert interface members to JSON
-fn members_to_json(members : Array[@dts_parser.InterfaceMember]) -> String {
+
+///|
+fn members_to_json(members : Array[@ts_parser.InterfaceMember]) -> String {
   let result = StringBuilder::new()
   result.write_string("[")
   for i, member in members {
@@ -168,7 +176,9 @@ fn members_to_json(members : Array[@dts_parser.InterfaceMember]) -> String {
 }
 
 // Convert class members to JSON
-fn class_members_to_json(members : Array[@dts_parser.ClassMember]) -> String {
+
+///|
+fn class_members_to_json(members : Array[@ts_parser.ClassMember]) -> String {
   let result = StringBuilder::new()
   result.write_string("[")
   for i, member in members {
@@ -212,7 +222,9 @@ fn class_members_to_json(members : Array[@dts_parser.ClassMember]) -> String {
 }
 
 // Convert visibility to string
-fn visibility_to_string(vis : @dts_parser.Visibility) -> String {
+
+///|
+fn visibility_to_string(vis : @ts_parser.Visibility) -> String {
   match vis {
     Public => "public"
     Private => "private"
@@ -221,7 +233,9 @@ fn visibility_to_string(vis : @dts_parser.Visibility) -> String {
 }
 
 // Convert parameters to JSON
-fn params_to_json(params : Array[@dts_parser.Parameter]) -> String {
+
+///|
+fn params_to_json(params : Array[@ts_parser.Parameter]) -> String {
   let result = StringBuilder::new()
   result.write_string("[")
   for i, param in params {
@@ -243,7 +257,9 @@ fn params_to_json(params : Array[@dts_parser.Parameter]) -> String {
 }
 
 // Convert Type to JSON
-fn type_to_json(typ : @dts_parser.Type) -> String {
+
+///|
+fn type_to_json(typ : @ts_parser.Type) -> String {
   match typ {
     String => "\"string\""
     Number => "\"number\""
@@ -322,7 +338,11 @@ fn type_to_json(typ : @dts_parser.Type) -> String {
 }
 
 // Convert export specifiers to JSON
-fn export_specifiers_to_json(specifiers : Array[@dts_parser.ExportSpecifier]) -> String {
+
+///|
+fn export_specifiers_to_json(
+  specifiers : Array[@ts_parser.ExportSpecifier],
+) -> String {
   let result = StringBuilder::new()
   result.write_string("[")
   for i, spec in specifiers {
@@ -347,7 +367,11 @@ fn export_specifiers_to_json(specifiers : Array[@dts_parser.ExportSpecifier]) ->
 }
 
 // Convert import specifiers to JSON
-fn import_specifiers_to_json(specifiers : Array[@dts_parser.ImportSpecifier]) -> String {
+
+///|
+fn import_specifiers_to_json(
+  specifiers : Array[@ts_parser.ImportSpecifier],
+) -> String {
   let result = StringBuilder::new()
   result.write_string("[")
   for i, spec in specifiers {
@@ -386,6 +410,8 @@ fn import_specifiers_to_json(specifiers : Array[@dts_parser.ImportSpecifier]) ->
 }
 
 // Escape JSON string
+
+///|
 fn escape_json_string(s : String) -> String {
   let result = StringBuilder::new()
   for c in s {

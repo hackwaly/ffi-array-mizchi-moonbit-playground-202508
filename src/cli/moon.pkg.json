@@ -1,6 +1,6 @@
 {
-  "name": "mizchi/esmbt/cli", 
-  "import": ["mizchi/esmbt/dts_parser"],
+  "name": "mizchi/esmbt/cli",
+  "import": ["mizchi/esmbt/ts_parser"],
   "test_import": [],
   "is-main": true
 }
