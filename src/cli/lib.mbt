@@ -4,8 +4,8 @@
 // Parse TypeScript code and return AST as JSON
 ///|
 pub fn parse_typescript(code : String) -> String {
-  let lexer = @typesrcipt_parser.Lexer::new(code)
-  let parser = @typesrcipt_parser.Parser::new(lexer)
+  let lexer = @typescript_parser.Lexer::new(code)
+  let parser = @typescript_parser.Parser::new(lexer)
   let declarations = parser.parse_typescript_file()
 
   // Convert AST to JSON string
@@ -16,16 +16,16 @@ pub fn parse_typescript(code : String) -> String {
 
 ///|
 pub fn generate_ffi(code : String) -> String {
-  let lexer = @typesrcipt_parser.Lexer::new(code)
-  let parser = @typesrcipt_parser.Parser::new(lexer)
+  let lexer = @typescript_parser.Lexer::new(code)
+  let parser = @typescript_parser.Parser::new(lexer)
   let declarations = parser.parse_typescript_file()
-  @typesrcipt_parser.generate_ffi_code(declarations)
+  @typescript_parser.generate_ffi_code(declarations)
 }
 
 // Helper function to convert declarations to JSON
 
 ///|
-fn declarations_to_json(declarations : Array[@typesrcipt_parser.Declaration]) -> String {
+fn declarations_to_json(declarations : Array[@typescript_parser.Declaration]) -> String {
   let result = StringBuilder::new()
   result.write_string("[")
   for i, decl in declarations {
@@ -41,7 +41,7 @@ fn declarations_to_json(declarations : Array[@typesrcipt_parser.Declaration]) ->
 // Convert a single declaration to JSON
 
 ///|
-fn declaration_to_json(decl : @typesrcipt_parser.Declaration) -> String {
+fn declaration_to_json(decl : @typescript_parser.Declaration) -> String {
   match decl {
     Interface(iface) => {
       let json = StringBuilder::new()
@@ -151,7 +151,7 @@ fn string_array_to_json(arr : Array[String]) -> String {
 // Convert interface members to JSON
 
 ///|
-fn members_to_json(members : Array[@typesrcipt_parser.InterfaceMember]) -> String {
+fn members_to_json(members : Array[@typescript_parser.InterfaceMember]) -> String {
   let result = StringBuilder::new()
   result.write_string("[")
   for i, member in members {
@@ -178,7 +178,7 @@ fn members_to_json(members : Array[@typesrcipt_parser.InterfaceMember]) -> Strin
 // Convert class members to JSON
 
 ///|
-fn class_members_to_json(members : Array[@typesrcipt_parser.ClassMember]) -> String {
+fn class_members_to_json(members : Array[@typescript_parser.ClassMember]) -> String {
   let result = StringBuilder::new()
   result.write_string("[")
   for i, member in members {
@@ -224,7 +224,7 @@ fn class_members_to_json(members : Array[@typesrcipt_parser.ClassMember]) -> Str
 // Convert visibility to string
 
 ///|
-fn visibility_to_string(vis : @typesrcipt_parser.Visibility) -> String {
+fn visibility_to_string(vis : @typescript_parser.Visibility) -> String {
   match vis {
     Public => "public"
     Private => "private"
@@ -235,7 +235,7 @@ fn visibility_to_string(vis : @typesrcipt_parser.Visibility) -> String {
 // Convert parameters to JSON
 
 ///|
-fn params_to_json(params : Array[@typesrcipt_parser.Parameter]) -> String {
+fn params_to_json(params : Array[@typescript_parser.Parameter]) -> String {
   let result = StringBuilder::new()
   result.write_string("[")
   for i, param in params {
@@ -259,7 +259,7 @@ fn params_to_json(params : Array[@typesrcipt_parser.Parameter]) -> String {
 // Convert Type to JSON
 
 ///|
-fn type_to_json(typ : @typesrcipt_parser.Type) -> String {
+fn type_to_json(typ : @typescript_parser.Type) -> String {
   match typ {
     String => "\"string\""
     Number => "\"number\""
@@ -341,7 +341,7 @@ fn type_to_json(typ : @typesrcipt_parser.Type) -> String {
 
 ///|
 fn export_specifiers_to_json(
-  specifiers : Array[@typesrcipt_parser.ExportSpecifier],
+  specifiers : Array[@typescript_parser.ExportSpecifier],
 ) -> String {
   let result = StringBuilder::new()
   result.write_string("[")
@@ -370,7 +370,7 @@ fn export_specifiers_to_json(
 
 ///|
 fn import_specifiers_to_json(
-  specifiers : Array[@typesrcipt_parser.ImportSpecifier],
+  specifiers : Array[@typescript_parser.ImportSpecifier],
 ) -> String {
   let result = StringBuilder::new()
   result.write_string("[")
