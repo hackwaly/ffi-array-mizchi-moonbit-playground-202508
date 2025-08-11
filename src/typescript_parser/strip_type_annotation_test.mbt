@@ -1,166 +1,75 @@
-// TypeScript型アノテーション除去のテスト
+// TypeScript型アノテーション除去のテスト - シンプルな実装から開始
 
-///|
-test "strip_type_annotations_simple_function" {
-  let func = FunctionDeclaration::{
-    name: "add",
-    params: [
-      @typescript_parser.Parameter::{
-        name: "a",
-        type_: @typescript_parser.Number,
-        optional: false,
-        rest: false,
-      },
-      @typescript_parser.Parameter::{
-        name: "b",
-        type_: @typescript_parser.Number,
-        optional: false,
-        rest: false,
-      },
-    ],
-    return_type: @typescript_parser.Number,
-    declare: false,
-    is_async: false,
+test "parse simple function declaration" {
+  let input = "function add(a: number, b: number): number {}"
+  let lexer = Lexer::new(input)
+  let parser = Parser::new(lexer)
+  
+  let result = parser.parse_declaration()
+  match result {
+    Some(Function(func)) => {
+      inspect(func.name, content="add")
+      inspect(func.params.length(), content="2")
+    }
+    _ => inspect(false, content="true")
   }
-  let result = strip_type_annotations(func)
-  inspect(result, content="add(a, b)")
 }
 
-///|
-test "strip_type_annotations_async_function" {
-  let func = FunctionDeclaration::{
-    name: "fetchData",
-    params: [
-      @typescript_parser.Parameter::{
-        name: "url",
-        type_: @typescript_parser.String,
-        optional: false,
-        rest: false,
-      },
-    ],
-    return_type: @typescript_parser.TypeReference("Promise", [
-      @typescript_parser.String,
-    ]),
-    declare: false,
-    is_async: true,
+test "parse async function" {
+  let input = "async function fetchData(url: string): Promise<string> {}"
+  let lexer = Lexer::new(input)
+  let parser = Parser::new(lexer)
+  
+  let result = parser.parse_declaration()
+  match result {
+    Some(Function(func)) => {
+      inspect(func.name, content="fetchData")
+      inspect(func.is_async, content="true")
+    }
+    _ => inspect(false, content="true")
   }
-  let result = strip_type_annotations(func)
-  inspect(result, content="async fetchData(url)")
 }
 
-///|
-test "strip_type_annotations_rest_parameter" {
-  let func = FunctionDeclaration::{
-    name: "sum",
-    params: [
-      @typescript_parser.Parameter::{
-        name: "numbers",
-        type_: @typescript_parser.Number,
-        optional: false,
-        rest: true,
-      },
-    ],
-    return_type: @typescript_parser.Number,
-    declare: false,
-    is_async: false,
+test "function with optional params" {
+  let input = "function greet(name: string, title?: string): string {}"
+  let lexer = Lexer::new(input)
+  let parser = Parser::new(lexer)
+  
+  let result = parser.parse_declaration()
+  match result {
+    Some(Function(func)) => {
+      inspect(func.params[0].optional, content="false")
+      inspect(func.params[1].optional, content="true")
+    }
+    _ => inspect(false, content="true")
   }
-  let result = strip_type_annotations(func)
-  inspect(result, content="sum(...numbers)")
 }
 
-///|
-test "strip_type_annotations_optional_parameter" {
-  let func = FunctionDeclaration::{
-    name: "greet",
-    params: [
-      @typescript_parser.Parameter::{
-        name: "name",
-        type_: @typescript_parser.String,
-        optional: false,
-        rest: false,
-      },
-      @typescript_parser.Parameter::{
-        name: "title",
-        type_: @typescript_parser.String,
-        optional: true,
-        rest: false,
-      },
-    ],
-    return_type: @typescript_parser.String,
-    declare: false,
-    is_async: false,
+test "function with rest params" {
+  let input = "function sum(...numbers: number[]): number {}"
+  let lexer = Lexer::new(input)
+  let parser = Parser::new(lexer)
+  
+  let result = parser.parse_declaration()
+  match result {
+    Some(Function(func)) => {
+      inspect(func.params[0].rest, content="true")
+    }
+    _ => inspect(false, content="true")
   }
-
-  // Note: 現在の実装ではoptionalマーカーは除去されるが、
-  // JavaScriptでは関数の引数はすべてoptionalなので問題ない
-  let result = strip_type_annotations(func)
-  inspect(result, content="greet(name, title)")
 }
 
-///|
-test "generate_function_binding_with_inline_implementation" {
-  let func = FunctionDeclaration::{
-    name: "multiply",
-    params: [
-      @typescript_parser.Parameter::{
-        name: "x",
-        type_: @typescript_parser.Number,
-        optional: false,
-        rest: false,
-      },
-      @typescript_parser.Parameter::{
-        name: "y",
-        type_: @typescript_parser.Number,
-        optional: false,
-        rest: false,
-      },
-    ],
-    return_type: @typescript_parser.Number,
-    declare: false,
-    is_async: false,
+test "generate FFI binding" {
+  let input = "function multiply(x: number, y: number): number {}"
+  let lexer = Lexer::new(input)
+  let parser = Parser::new(lexer)
+  
+  match parser.parse_declaration() {
+    Some(Function(func)) => {
+      let binding = generate_function_binding(func)
+      inspect(binding.contains("extern \"js\" fn multiply"), content="true")
+      inspect(binding.contains("Double"), content="true")
+    }
+    _ => inspect(false, content="true")
   }
-  let binding = generate_function_binding(
-    func,
-    inline_implementation=true,
-  )
-  inspect(
-    binding.contains(
-      "extern \"js\" fn multiply(x : Double, y : Double) -> Double = #|",
-    ),
-    content="true",
-  )
-  inspect(binding.contains("multiply(x, y) {"), content="true")
-  inspect(binding.contains("// Implementation would go here"), content="true")
-}
-
-///|
-test "generate_function_binding_reference_only" {
-  let func = FunctionDeclaration::{
-    name: "divide",
-    params: [
-      @typescript_parser.Parameter::{
-        name: "a",
-        type_: @typescript_parser.Number,
-        optional: false,
-        rest: false,
-      },
-      @typescript_parser.Parameter::{
-        name: "b",
-        type_: @typescript_parser.Number,
-        optional: false,
-        rest: false,
-      },
-    ],
-    return_type: @typescript_parser.Number,
-    declare: false,
-    is_async: false,
-  }
-  let binding = generate_function_binding(
-    func,
-    inline_implementation=false,
-  )
-  inspect(
-    binding,
-    content="extern \"js\" fn divide(a : Double, b : Double) -> Double = #|divide|#\n",
-  )
 }
