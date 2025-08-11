@@ -2,154 +2,154 @@
 
 test "validate primitive types" {
   // All primitive types should be supported
-  inspect!(is_supported_type(Type::String), content="true")
-  inspect!(is_supported_type(Type::Number), content="true")
-  inspect!(is_supported_type(Type::Boolean), content="true")
-  inspect!(is_supported_type(Type::Void), content="true")
-  inspect!(is_supported_type(Type::Null), content="true")
-  inspect!(is_supported_type(Type::Undefined), content="true")
-  inspect!(is_supported_type(Type::Any), content="true")
-  inspect!(is_supported_type(Type::Unknown), content="true")
+  inspect(is_supported_type(@typescript_parser.String), content="true")
+  inspect(is_supported_type(@typescript_parser.Number), content="true")
+  inspect(is_supported_type(@typescript_parser.Boolean), content="true")
+  inspect(is_supported_type(@typescript_parser.Void), content="true")
+  inspect(is_supported_type(@typescript_parser.Null), content="true")
+  inspect(is_supported_type(@typescript_parser.Undefined), content="true")
+  inspect(is_supported_type(@typescript_parser.Any), content="true")
+  inspect(is_supported_type(@typescript_parser.Unknown), content="true")
   
   // Never type should not be supported
-  inspect!(is_supported_type(Type::Never), content="false")
+  inspect(is_supported_type(@typescript_parser.Never), content="false")
 }
 
 test "validate array types" {
   // Array of primitive types should be supported
-  inspect!(is_supported_type(Type::Array(Type::String)), content="true")
-  inspect!(is_supported_type(Type::Array(Type::Number)), content="true")
+  inspect(is_supported_type(@typescript_parser.Array(@typescript_parser.String)), content="true")
+  inspect(is_supported_type(@typescript_parser.Array(@typescript_parser.Number)), content="true")
   
   // Nested arrays should be supported
-  inspect!(is_supported_type(Type::Array(Type::Array(Type::String))), content="true")
+  inspect(is_supported_type(@typescript_parser.Array(@typescript_parser.Array(@typescript_parser.String))), content="true")
   
   // Array of unsupported type should not be supported
-  inspect!(is_supported_type(Type::Array(Type::Never)), content="false")
+  inspect(is_supported_type(@typescript_parser.Array(@typescript_parser.Never)), content="false")
 }
 
 test "validate type references" {
   // Promise should be supported
-  let promise_type = Type::TypeReference("Promise", [Type::String])
-  inspect!(is_supported_type(promise_type), content="true")
+  let promise_type = @typescript_parser.TypeReference("Promise", [@typescript_parser.String])
+  inspect(is_supported_type(promise_type), content="true")
   
   // DOM types should be supported
-  inspect!(is_supported_type(Type::TypeReference("HTMLElement", [])), content="true")
-  inspect!(is_supported_type(Type::TypeReference("Document", [])), content="true")
+  inspect(is_supported_type(@typescript_parser.TypeReference("HTMLElement", [])), content="true")
+  inspect(is_supported_type(@typescript_parser.TypeReference("Document", [])), content="true")
   
   // mbt.* types should be supported
-  inspect!(is_supported_type(Type::TypeReference("mbt.String", [])), content="true")
-  inspect!(is_supported_type(Type::TypeReference("mbt.Custom", [])), content="true")
+  inspect(is_supported_type(@typescript_parser.TypeReference("mbt.String", [])), content="true")
+  inspect(is_supported_type(@typescript_parser.TypeReference("mbt.Custom", [])), content="true")
   
   // Generic types with supported type args should be supported
-  let generic_type = Type::TypeReference("Container", [Type::String, Type::Number])
-  inspect!(is_supported_type(generic_type), content="true")
+  let generic_type = @typescript_parser.TypeReference("Container", [@typescript_parser.String, @typescript_parser.Number])
+  inspect(is_supported_type(generic_type), content="true")
 }
 
 test "validate function types" {
   // Simple function type
-  let simple_func = Type::Function({
+  let simple_func = @typescript_parser.Function({
     params: [
-      { name: "x", type_: Type::Number, optional: false, rest: false }
+      { name: "x", type_: @typescript_parser.Number, optional: false, rest: false }
     ],
-    return_type: Type::String
+    return_type: @typescript_parser.String
   })
-  inspect!(is_supported_type(simple_func), content="true")
+  inspect(is_supported_type(simple_func), content="true")
   
   // Function with multiple parameters
-  let multi_param_func = Type::Function({
+  let multi_param_func = @typescript_parser.Function({
     params: [
-      { name: "a", type_: Type::String, optional: false, rest: false },
-      { name: "b", type_: Type::Number, optional: true, rest: false }
+      { name: "a", type_: @typescript_parser.String, optional: false, rest: false },
+      { name: "b", type_: @typescript_parser.Number, optional: true, rest: false }
     ],
-    return_type: Type::Boolean
+    return_type: @typescript_parser.Boolean
   })
-  inspect!(is_supported_type(multi_param_func), content="true")
+  inspect(is_supported_type(multi_param_func), content="true")
   
   // Function with unsupported parameter type
-  let unsupported_func = Type::Function({
+  let unsupported_func = @typescript_parser.Function({
     params: [
-      { name: "x", type_: Type::Never, optional: false, rest: false }
+      { name: "x", type_: @typescript_parser.Never, optional: false, rest: false }
     ],
-    return_type: Type::Void
+    return_type: @typescript_parser.Void
   })
-  inspect!(is_supported_type(unsupported_func), content="false")
+  inspect(is_supported_type(unsupported_func), content="false")
 }
 
 test "validate object types" {
   // Simple object type
-  let obj_type = Type::Object(
+  let obj_type = @typescript_parser.Object(
     Map::from_array([
-      ("name", Type::String),
-      ("age", Type::Number)
+      ("name", @typescript_parser.String),
+      ("age", @typescript_parser.Number)
     ])
   )
-  inspect!(is_supported_type(obj_type), content="true")
+  inspect(is_supported_type(obj_type), content="true")
   
   // Object with unsupported property type
-  let unsupported_obj = Type::Object(
+  let unsupported_obj = @typescript_parser.Object(
     Map::from_array([
-      ("valid", Type::String),
-      ("invalid", Type::Never)
+      ("valid", @typescript_parser.String),
+      ("invalid", @typescript_parser.Never)
     ])
   )
-  inspect!(is_supported_type(unsupported_obj), content="false")
+  inspect(is_supported_type(unsupported_obj), content="false")
 }
 
 test "validate union types" {
   // Nullable union should be supported
-  let nullable_union = Type::Union([Type::String, Type::Null])
-  inspect!(is_supported_type(nullable_union), content="true")
+  let nullable_union = @typescript_parser.Union([@typescript_parser.String, @typescript_parser.Null])
+  inspect(is_supported_type(nullable_union), content="true")
   
-  let optional_union = Type::Union([Type::Number, Type::Undefined])
-  inspect!(is_supported_type(optional_union), content="true")
+  let optional_union = @typescript_parser.Union([@typescript_parser.Number, @typescript_parser.Undefined])
+  inspect(is_supported_type(optional_union), content="true")
   
-  let full_optional = Type::Union([Type::String, Type::Null, Type::Undefined])
-  inspect!(is_supported_type(full_optional), content="true")
+  let full_optional = @typescript_parser.Union([@typescript_parser.String, @typescript_parser.Null, @typescript_parser.Undefined])
+  inspect(is_supported_type(full_optional), content="true")
   
   // Complex union should not be supported
-  let complex_union = Type::Union([Type::String, Type::Number])
-  inspect!(is_supported_type(complex_union), content="false")
+  let complex_union = @typescript_parser.Union([@typescript_parser.String, @typescript_parser.Number])
+  inspect(is_supported_type(complex_union), content="false")
   
   // Single element union should be supported
-  let single_union = Type::Union([Type::String])
-  inspect!(is_supported_type(single_union), content="true")
+  let single_union = @typescript_parser.Union([@typescript_parser.String])
+  inspect(is_supported_type(single_union), content="true")
 }
 
 test "validate intersection types" {
   // Intersection types should not be supported
-  let intersection = Type::Intersection([Type::String, Type::Number])
-  inspect!(is_supported_type(intersection), content="false")
+  let intersection = @typescript_parser.Intersection([@typescript_parser.String, @typescript_parser.Number])
+  inspect(is_supported_type(intersection), content="false")
 }
 
 test "validate tuple types" {
   // Simple tuple
-  let simple_tuple = Type::Tuple([Type::String, Type::Number])
-  inspect!(is_supported_type(simple_tuple), content="true")
+  let simple_tuple = @typescript_parser.Tuple([@typescript_parser.String, @typescript_parser.Number])
+  inspect(is_supported_type(simple_tuple), content="true")
   
   // Empty tuple
-  let empty_tuple = Type::Tuple([])
-  inspect!(is_supported_type(empty_tuple), content="true")
+  let empty_tuple = @typescript_parser.Tuple([])
+  inspect(is_supported_type(empty_tuple), content="true")
   
   // Tuple with unsupported type
-  let unsupported_tuple = Type::Tuple([Type::String, Type::Never])
-  inspect!(is_supported_type(unsupported_tuple), content="false")
+  let unsupported_tuple = @typescript_parser.Tuple([@typescript_parser.String, @typescript_parser.Never])
+  inspect(is_supported_type(unsupported_tuple), content="false")
 }
 
 test "validate literal types" {
   // All literal types should be supported
-  inspect!(is_supported_type(Type::Literal(LiteralType::String("hello"))), content="true")
-  inspect!(is_supported_type(Type::Literal(LiteralType::Number(42.0))), content="true")
-  inspect!(is_supported_type(Type::Literal(LiteralType::Boolean(true))), content="true")
+  inspect(is_supported_type(@typescript_parser.Literal(Literal@typescript_parser.String("hello"))), content="true")
+  inspect(is_supported_type(@typescript_parser.Literal(Literal@typescript_parser.Number(42.0))), content="true")
+  inspect(is_supported_type(@typescript_parser.Literal(Literal@typescript_parser.Boolean(true))), content="true")
 }
 
 test "validate optional and readonly types" {
   // Optional types should be supported if inner type is supported
-  inspect!(is_supported_type(Type::Optional(Type::String)), content="true")
-  inspect!(is_supported_type(Type::Optional(Type::Never)), content="false")
+  inspect(is_supported_type(@typescript_parser.Optional(@typescript_parser.String)), content="true")
+  inspect(is_supported_type(@typescript_parser.Optional(@typescript_parser.Never)), content="false")
   
   // Readonly types should be supported if inner type is supported
-  inspect!(is_supported_type(Type::Readonly(Type::Number)), content="true")
-  inspect!(is_supported_type(Type::Readonly(Type::Never)), content="false")
+  inspect(is_supported_type(@typescript_parser.Readonly(@typescript_parser.Number)), content="true")
+  inspect(is_supported_type(@typescript_parser.Readonly(@typescript_parser.Never)), content="false")
 }
 
 test "validate declarations" {
@@ -160,63 +160,63 @@ test "validate declarations" {
     extends: [],
     members: []
   })
-  inspect!(is_supported_declaration(interface_decl), content="true")
+  inspect(is_supported_declaration(interface_decl), content="true")
   
   let type_alias = Declaration::TypeAlias({
     name: "TestAlias",
     type_params: [],
-    type_: Type::String
+    type_: @typescript_parser.String
   })
-  inspect!(is_supported_declaration(type_alias), content="true")
+  inspect(is_supported_declaration(type_alias), content="true")
   
   let function_decl = Declaration::Function({
     name: "testFunc",
     params: [],
-    return_type: Type::Void,
+    return_type: @typescript_parser.Void,
     declare: false
   })
-  inspect!(is_supported_declaration(function_decl), content="true")
+  inspect(is_supported_declaration(function_decl), content="true")
 }
 
 test "validation result collection" {
   let result = ValidationResult::new()
   
   // Initially valid
-  inspect!(result.is_valid, content="true")
-  inspect!(result.errors.length(), content="0")
-  inspect!(result.warnings.length(), content="0")
+  inspect(result.is_valid, content="true")
+  inspect(result.errors.length(), content="0")
+  inspect(result.warnings.length(), content="0")
   
   // Add warning - should still be valid
   result.add_warning("Test warning")
-  inspect!(result.is_valid, content="true")
-  inspect!(result.warnings.length(), content="1")
+  inspect(result.is_valid, content="true")
+  inspect(result.warnings.length(), content="1")
   
   // Add error - should become invalid
   result.add_error("Test error")
-  inspect!(result.is_valid, content="false")
-  inspect!(result.errors.length(), content="1")
+  inspect(result.is_valid, content="false")
+  inspect(result.errors.length(), content="1")
 }
 
 test "validate type with errors and warnings" {
   let result = ValidationResult::new()
   
   // Any type should generate warning
-  validate_type(Type::Any, result)
-  inspect!(result.warnings.length() > 0, content="true")
-  inspect!(result.is_valid, content="true")
+  validate_type(@typescript_parser.Any, result)
+  inspect(result.warnings.length() > 0, content="true")
+  inspect(result.is_valid, content="true")
   
   // Never type should generate error
   let result2 = ValidationResult::new()
-  validate_type(Type::Never, result2)
-  inspect!(result2.errors.length() > 0, content="true")
-  inspect!(result2.is_valid, content="false")
+  validate_type(@typescript_parser.Never, result2)
+  inspect(result2.errors.length() > 0, content="true")
+  inspect(result2.is_valid, content="false")
   
   // Complex union should generate error
   let result3 = ValidationResult::new()
-  let complex_union = Type::Union([Type::String, Type::Number, Type::Boolean])
+  let complex_union = @typescript_parser.Union([@typescript_parser.String, @typescript_parser.Number, @typescript_parser.Boolean])
   validate_type(complex_union, result3)
-  inspect!(result3.errors.length() > 0, content="true")
-  inspect!(result3.is_valid, content="false")
+  inspect(result3.errors.length() > 0, content="true")
+  inspect(result3.is_valid, content="false")
 }
 
 test "validate interface with issues" {
@@ -230,16 +230,16 @@ test "validate interface with issues" {
     members: [
       InterfaceMember::IndexSignature({
         key_name: "key",
-        key_type: Type::String,
-        value_type: Type::Any,
+        key_type: @typescript_parser.String,
+        value_type: @typescript_parser.Any,
         readonly_: false
       })
     ]
   }
   
   validate_interface(interface_with_index, result)
-  inspect!(result.errors.length() > 0, content="true")
-  inspect!(result.is_valid, content="false")
+  inspect(result.errors.length() > 0, content="true")
+  inspect(result.is_valid, content="false")
   
   // Interface with multiple inheritance should generate error
   let result2 = ValidationResult::new()
@@ -251,8 +251,8 @@ test "validate interface with issues" {
   }
   
   validate_interface(multi_inherit, result2)
-  inspect!(result2.errors.length() > 0, content="true")
-  inspect!(result2.is_valid, content="false")
+  inspect(result2.errors.length() > 0, content="true")
+  inspect(result2.is_valid, content="false")
 }
 
 test "validate class with issues" {
@@ -269,8 +269,8 @@ test "validate class with issues" {
   }
   
   validate_class(class_with_implements, result)
-  inspect!(result.errors.length() > 0, content="true")
-  inspect!(result.is_valid, content="false")
+  inspect(result.errors.length() > 0, content="true")
+  inspect(result.is_valid, content="false")
   
   // Class with private members should generate warning
   let result2 = ValidationResult::new()
@@ -282,7 +282,7 @@ test "validate class with issues" {
     members: [
       ClassMember::ClassProperty({
         name: "privateField",
-        type_: Type::String,
+        type_: @typescript_parser.String,
         visibility: Visibility::Private,
         is_static: false,
         readonly_: false,
@@ -293,24 +293,24 @@ test "validate class with issues" {
   }
   
   validate_class(class_with_private, result2)
-  inspect!(result2.warnings.length() > 0, content="true")
-  inspect!(result2.is_valid, content="true")  // Should still be valid with warnings
+  inspect(result2.warnings.length() > 0, content="true")
+  inspect(result2.is_valid, content="true")  // Should still be valid with warnings
 }
 
 test "feature support checks" {
   // Supported features
-  inspect!(is_feature_supported(Feature::Generics), content="true")
-  inspect!(is_feature_supported(Feature::TupleTypes), content="true")
-  inspect!(is_feature_supported(Feature::RestParameters), content="true")
-  inspect!(is_feature_supported(Feature::OptionalChaining), content="true")
-  inspect!(is_feature_supported(Feature::Unions), content="true")
+  inspect(is_feature_supported(Feature::Generics), content="true")
+  inspect(is_feature_supported(Feature::TupleTypes), content="true")
+  inspect(is_feature_supported(Feature::RestParameters), content="true")
+  inspect(is_feature_supported(Feature::OptionalChaining), content="true")
+  inspect(is_feature_supported(Feature::Unions), content="true")
   
   // Not supported features
-  inspect!(is_feature_supported(Feature::Intersections), content="false")
-  inspect!(is_feature_supported(Feature::ConditionalTypes), content="false")
-  inspect!(is_feature_supported(Feature::MappedTypes), content="false")
-  inspect!(is_feature_supported(Feature::Decorators), content="false")
-  inspect!(is_feature_supported(Feature::IndexSignatures), content="false")
+  inspect(is_feature_supported(Feature::Intersections), content="false")
+  inspect(is_feature_supported(Feature::ConditionalTypes), content="false")
+  inspect(is_feature_supported(Feature::MappedTypes), content="false")
+  inspect(is_feature_supported(Feature::Decorators), content="false")
+  inspect(is_feature_supported(Feature::IndexSignatures), content="false")
 }
 
 test "validate complete DTS file" {
@@ -325,7 +325,7 @@ test "validate complete DTS file" {
         members: [
           InterfaceMember::Property({
             name: "prop",
-            type_: Type::String,
+            type_: @typescript_parser.String,
             optional: false,
             readonly_: false
           })
@@ -335,18 +335,18 @@ test "validate complete DTS file" {
       Declaration::TypeAlias({
         name: "InvalidAlias",
         type_params: [],
-        type_: Type::Intersection([Type::String, Type::Number])
+        type_: @typescript_parser.Intersection([@typescript_parser.String, @typescript_parser.Number])
       }),
       // Function with warning (any type)
       Declaration::Function({
         name: "warnFunc",
         params: [{
           name: "param",
-          type_: Type::Any,
+          type_: @typescript_parser.Any,
           optional: false,
           rest: false
         }],
-        return_type: Type::Void,
+        return_type: @typescript_parser.Void,
         declare: false
       })
     ]
@@ -355,9 +355,9 @@ test "validate complete DTS file" {
   let result = validate_dts_file(file)
   
   // Should have errors due to intersection type
-  inspect!(result.is_valid, content="false")
-  inspect!(result.errors.length() > 0, content="true")
+  inspect(result.is_valid, content="false")
+  inspect(result.errors.length() > 0, content="true")
   
   // Should have warnings due to any type
-  inspect!(result.warnings.length() > 0, content="true")
+  inspect(result.warnings.length() > 0, content="true")
 }

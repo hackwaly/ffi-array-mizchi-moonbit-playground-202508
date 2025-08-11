@@ -4,10 +4,10 @@ test "strip_type_annotations_simple_function" {
   let func = FunctionDeclaration::{
     name: "add",
     params: [
-      { name: "a", type_: Number, optional: false, rest: false },
-      { name: "b", type_: Number, optional: false, rest: false }
+      { name: "a", type_: @typescript_parser.Number, optional: false, rest: false },
+      { name: "b", type_: @typescript_parser.Number, optional: false, rest: false }
     ],
-    return_type: Number,
+    return_type: @typescript_parser.Number,
     declare: false,
     is_async: false
   }
@@ -20,9 +20,9 @@ test "strip_type_annotations_async_function" {
   let func = FunctionDeclaration::{
     name: "fetchData",
     params: [
-      { name: "url", type_: String, optional: false, rest: false }
+      { name: "url", type_: @typescript_parser.String, optional: false, rest: false }
     ],
-    return_type: TypeReference("Promise", [String]),
+    return_type: @typescript_parser.TypeReference("Promise", [@typescript_parser.String]),
     declare: false,
     is_async: true
   }
@@ -35,9 +35,9 @@ test "strip_type_annotations_rest_parameter" {
   let func = FunctionDeclaration::{
     name: "sum",
     params: [
-      { name: "numbers", type_: Number, optional: false, rest: true }
+      { name: "numbers", type_: @typescript_parser.Number, optional: false, rest: true }
     ],
-    return_type: Number,
+    return_type: @typescript_parser.Number,
     declare: false,
     is_async: false
   }
@@ -50,10 +50,10 @@ test "strip_type_annotations_optional_parameter" {
   let func = FunctionDeclaration::{
     name: "greet",
     params: [
-      { name: "name", type_: String, optional: false, rest: false },
-      { name: "title", type_: String, optional: true, rest: false }
+      { name: "name", type_: @typescript_parser.String, optional: false, rest: false },
+      { name: "title", type_: @typescript_parser.String, optional: true, rest: false }
     ],
-    return_type: String,
+    return_type: @typescript_parser.String,
     declare: false,
     is_async: false
   }
@@ -68,28 +68,28 @@ test "generate_function_binding_with_inline_implementation" {
   let func = FunctionDeclaration::{
     name: "multiply",
     params: [
-      { name: "x", type_: Number, optional: false, rest: false },
-      { name: "y", type_: Number, optional: false, rest: false }
+      { name: "x", type_: @typescript_parser.Number, optional: false, rest: false },
+      { name: "y", type_: @typescript_parser.Number, optional: false, rest: false }
     ],
-    return_type: Number,
+    return_type: @typescript_parser.Number,
     declare: false,
     is_async: false
   }
   
   let binding = generate_function_binding(func, inline_implementation=Some(true))
-  inspect(binding.contains("extern \"js\" fn multiply(x : Double, y : Double) -> Double = #|")
-  inspect(binding.contains("multiply(x, y) {")
-  inspect(binding.contains("// Implementation would go here")
+  inspect(binding.contains("extern \"js\" fn multiply(x : Double, y : Double) -> Double = #|"), content="true")
+  inspect(binding.contains("multiply(x, y) {"), content="true")
+  inspect(binding.contains("// Implementation would go here"), content="true")
 }
 
 test "generate_function_binding_reference_only" {
   let func = FunctionDeclaration::{
     name: "divide",
     params: [
-      { name: "a", type_: Number, optional: false, rest: false },
-      { name: "b", type_: Number, optional: false, rest: false }
+      { name: "a", type_: @typescript_parser.Number, optional: false, rest: false },
+      { name: "b", type_: @typescript_parser.Number, optional: false, rest: false }
     ],
-    return_type: Number,
+    return_type: @typescript_parser.Number,
     declare: false,
     is_async: false
   }
