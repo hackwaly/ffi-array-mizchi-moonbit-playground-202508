@@ -2,7 +2,7 @@
 
 test "generated FFI code type checks correctly" {
   // Simulate the type checking process
-  let sample_interface = """
+  let sample_interface =
 pub struct User {
   value : JSValue
 }

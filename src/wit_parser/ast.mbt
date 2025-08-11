@@ -11,13 +11,13 @@ pub enum TopLevelItem {
   Interface(Interface)
   World(World)
   Use(UseItem)
-} derive(Debug, Show, Eq)
+} derive(Show, Eq)
 
 // Interface definition
 pub struct Interface {
   name : String
   items : Array[InterfaceItem]
-} derive(Debug, Show, Eq)
+} derive( Show, Eq)
 
 // Items within an interface
 pub enum InterfaceItem {
@@ -25,7 +25,7 @@ pub enum InterfaceItem {
   Type(TypeDef)
   Function(Function)
   Export(String)  // Export another interface
-} derive(Debug, Show, Eq)
+} derive( Show, Eq)
 
 // World definition
 pub struct World {

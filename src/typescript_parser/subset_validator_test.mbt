@@ -137,9 +137,9 @@ test "validate tuple types" {
 
 test "validate literal types" {
   // All literal types should be supported
-  inspect(is_supported_type(@typescript_parser.Literal(Literal@typescript_parser.String("hello"))), content="true")
-  inspect(is_supported_type(@typescript_parser.Literal(Literal@typescript_parser.Number(42.0))), content="true")
-  inspect(is_supported_type(@typescript_parser.Literal(Literal@typescript_parser.Boolean(true))), content="true")
+  inspect(is_supported_type(@typescript_parser.Literal(@typescript_parser.LiteralType::String("hello"))), content="true")
+  inspect(is_supported_type(@typescript_parser.Literal(@typescript_parser.LiteralType::Number("42.0"))), content="true")
+  inspect(is_supported_type(@typescript_parser.Literal(@typescript_parser.LiteralType::Boolean(true))), content="true")
 }
 
 test "validate optional and readonly types" {
