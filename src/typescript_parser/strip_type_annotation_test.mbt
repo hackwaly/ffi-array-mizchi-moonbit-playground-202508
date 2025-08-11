@@ -4,10 +4,10 @@ test "strip_type_annotations_simple_function" {
   let func = FunctionDeclaration::{
     name: "add",
     params: [
-      Parameter::{ name: "a", type_: Type::Number, optional: false, rest: false },
-      Parameter::{ name: "b", type_: Type::Number, optional: false, rest: false }
+      { name: "a", type_: Number, optional: false, rest: false },
+      { name: "b", type_: Number, optional: false, rest: false }
     ],
-    return_type: Type::Number,
+    return_type: Number,
     declare: false,
     is_async: false
   }
@@ -20,7 +20,7 @@ test "strip_type_annotations_async_function" {
   let func = FunctionDeclaration::{
     name: "fetchData",
     params: [
-      Parameter::{ name: "url", type_: String, optional: false, rest: false }
+      { name: "url", type_: String, optional: false, rest: false }
     ],
     return_type: TypeReference("Promise", [String]),
     declare: false,
@@ -35,7 +35,7 @@ test "strip_type_annotations_rest_parameter" {
   let func = FunctionDeclaration::{
     name: "sum",
     params: [
-      Parameter::{ name: "numbers", type_: Number, optional: false, rest: true }
+      { name: "numbers", type_: Number, optional: false, rest: true }
     ],
     return_type: Number,
     declare: false,
@@ -50,8 +50,8 @@ test "strip_type_annotations_optional_parameter" {
   let func = FunctionDeclaration::{
     name: "greet",
     params: [
-      Parameter::{ name: "name", type_: String, optional: false, rest: false },
-      Parameter::{ name: "title", type_: String, optional: true, rest: false }
+      { name: "name", type_: String, optional: false, rest: false },
+      { name: "title", type_: String, optional: true, rest: false }
     ],
     return_type: String,
     declare: false,
@@ -68,8 +68,8 @@ test "generate_function_binding_with_inline_implementation" {
   let func = FunctionDeclaration::{
     name: "multiply",
     params: [
-      Parameter::{ name: "x", type_: Number, optional: false, rest: false },
-      Parameter::{ name: "y", type_: Number, optional: false, rest: false }
+      { name: "x", type_: Number, optional: false, rest: false },
+      { name: "y", type_: Number, optional: false, rest: false }
     ],
     return_type: Number,
     declare: false,
@@ -86,8 +86,8 @@ test "generate_function_binding_reference_only" {
   let func = FunctionDeclaration::{
     name: "divide",
     params: [
-      Parameter::{ name: "a", type_: Number, optional: false, rest: false },
-      Parameter::{ name: "b", type_: Number, optional: false, rest: false }
+      { name: "a", type_: Number, optional: false, rest: false },
+      { name: "b", type_: Number, optional: false, rest: false }
     ],
     return_type: Number,
     declare: false,

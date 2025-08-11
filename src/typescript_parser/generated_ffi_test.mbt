@@ -20,9 +20,13 @@ test "generate and save FFI code for type checking" {
   let ffi_code = generate_ffi_code(declarations)
   
   // ヘッダーの重複を修正
-  let cleaned_ffi = ffi_code.split("\n").filter(fn(line) {
-    not(line == "// Auto-generated FFI bindings from TypeScript")
-  }).join("\n")
+  let lines : Array[String] = []
+  for line in ffi_code.split("\n") {
+    if line.to_string() != "// Auto-generated FFI bindings from TypeScript" {
+      lines.push(line.to_string())
+    }
+  }
+  let cleaned_ffi = lines.join("\n")
   
   // 必要な型定義を追加
   let complete_ffi = "// Auto-generated MoonBit FFI bindings\n\n" +
