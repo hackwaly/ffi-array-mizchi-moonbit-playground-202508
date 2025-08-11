@@ -76,10 +76,10 @@ test "generate_function_binding_with_inline_implementation" {
     is_async: false
   }
   
-  let binding = generate_function_binding(func, inline_implementation=true)
-  expect(binding).to_contain("extern \"js\" fn multiply(x : Double, y : Double) -> Double = #|")
-  expect(binding).to_contain("multiply(x, y) {")
-  expect(binding).to_contain("// Implementation would go here")
+  let binding = generate_function_binding(func, inline_implementation=Some(true))
+  inspect(binding.contains("extern \"js\" fn multiply(x : Double, y : Double) -> Double = #|")
+  inspect(binding.contains("multiply(x, y) {")
+  inspect(binding.contains("// Implementation would go here")
 }
 
 test "generate_function_binding_reference_only" {
@@ -94,6 +94,6 @@ test "generate_function_binding_reference_only" {
     is_async: false
   }
   
-  let binding = generate_function_binding(func, inline_implementation=false)
-  expect(binding).to_equal("extern \"js\" fn divide(a : Double, b : Double) -> Double = #|divide|#\n")
+  let binding = generate_function_binding(func, inline_implementation=Some(false))
+  inspect(binding, content="extern \"js\" fn divide(a : Double, b : Double) -> Double = #|divide|#\n")
 }

@@ -203,7 +203,7 @@ pub fn generate_js_implementation(func : FunctionDeclaration) -> String {
 ///|
 pub fn generate_function_binding(
   func : FunctionDeclaration,
-  ~inline_implementation : Bool = false
+  inline_implementation? : Bool
 ) -> String {
   let result = StringBuilder::new()
 
@@ -221,7 +221,7 @@ pub fn generate_function_binding(
   result.write_string(" = #|")
 
   // JavaScript側の実装
-  if inline_implementation {
+  if inline_implementation.unwrap_or(false) {
     // インライン実装の場合、関数全体を生成
     result.write_string("\n")
     result.write_string("  ")
