@@ -3,9 +3,9 @@ test "simple text node diff" {
   let new = Some(text("World"))
   let patches = diff(old, new)
   
-  assert_eq!(patches.length(), 1)
+  assert_eq(patches.length(), 1)
   match patches[0] {
-    Patch::UpdateText(content) => assert_eq!(content, "World")
+    Patch::UpdateText(content) => assert_eq(content, "World")
     _ => abort("Expected UpdateText patch")
   }
 }
@@ -15,7 +15,7 @@ test "element creation" {
   let new = Some(div(Map::new(), [text("Hello")]))
   let patches = diff(old, new)
   
-  assert_eq!(patches.length(), 1)
+  assert_eq(patches.length(), 1)
   match patches[0] {
     Patch::Create(_) => ()
     _ => abort("Expected Create patch")
@@ -27,7 +27,7 @@ test "element removal" {
   let new : VNode? = None
   let patches = diff(old, new)
   
-  assert_eq!(patches.length(), 1)
+  assert_eq(patches.length(), 1)
   match patches[0] {
     Patch::Remove => ()
     _ => abort("Expected Remove patch")
@@ -42,11 +42,11 @@ test "attribute update" {
   let new = Some(div(new_attrs, []))
   let patches = diff(old, new)
   
-  assert_eq!(patches.length(), 1)
+  assert_eq(patches.length(), 1)
   match patches[0] {
     Patch::UpdateAttributes(attrs) => {
       match attrs.get("class") {
-        Some(v) => assert_eq!(v, "new")
+        Some(v) => assert_eq(v, "new")
         None => abort("class attribute not found")
       }
     }
@@ -67,7 +67,7 @@ test "child append" {
     }
   }
   
-  assert_true!(has_append)
+  assert_true(has_append)
 }
 
 test "child removal" {
@@ -83,7 +83,7 @@ test "child removal" {
     }
   }
   
-  assert_true!(has_remove)
+  assert_true(has_remove)
 }
 
 test "complex structure diff" {
@@ -111,7 +111,7 @@ test "complex structure diff" {
   )
   
   let patches = diff(old, new)
-  assert_true!(patches.length() > 0)
+  assert_true(patches.length() > 0)
 }
 
 test "patch application" {
@@ -123,9 +123,9 @@ test "patch application" {
   let dom = create_dom_from_vnode(vnode)
   match dom {
     DOMNodeType::ElementNode(node) => {
-      assert_eq!(node.tag, "div")
+      assert_eq(node.tag, "div")
       match node.attributes.get("class") {
-        Some(v) => assert_eq!(v, "test")
+        Some(v) => assert_eq(v, "test")
         None => abort("class attribute not found")
       }
     }

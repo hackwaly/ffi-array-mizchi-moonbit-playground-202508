@@ -133,11 +133,3 @@ fn main {
   println("\nDemo completed!")
 }
 
-// Helper function
-fn String::repeat(self : String, times : Int) -> String {
-  let result = StringBuilder::new(size_hint=self.length() * times)
-  for i = 0; i < times; i = i + 1 {
-    result.write_string(self)
-  }
-  result.to_string()
-}

@@ -66,19 +66,22 @@ pub fn parse_args(args : Array[String], config : ParserConfig) -> ParsedArgs {
     if has_prefix(arg, "--") {
       let option_part = arg.substring(start=2)
       // --name=value
-      let eq_idx = option_part.index_of("=")
-      if eq_idx >= 0 {
-        let name = option_part.substring(end=eq_idx)
-        let value = option_part.substring(start=eq_idx + 1)
-        let canonical_name = resolve_option_name(name, config)
-        if is_boolean_flag(canonical_name, config) {
-          // Unexpected value for flag: keep backward-compat by setting flag true
-          flags[canonical_name] = true
-        } else {
-          options[canonical_name] = value
+      let eq_idx = option_part.find("=")
+      match eq_idx {
+        Some(idx) => {
+          let name = option_part.substring(end=idx)
+          let value = option_part.substring(start=idx + 1)
+          let canonical_name = resolve_option_name(name, config)
+          if is_boolean_flag(canonical_name, config) {
+            // Unexpected value for flag: keep backward-compat by setting flag true
+            flags[canonical_name] = true
+          } else {
+            options[canonical_name] = value
+          }
+          i = i + 1
+          continue
         }
-        i = i + 1
-        continue
+        None => ()
       }
 
       // --name value  OR  --name (flag)
@@ -124,19 +127,22 @@ pub fn parse_args(args : Array[String], config : ParserConfig) -> ParsedArgs {
       let short_part = arg.substring(start=1)
 
       // -o=val
-      let eq_idx2 = short_part.index_of("=")
-      if eq_idx2 >= 0 {
-        let name = short_part.substring(end=eq_idx2)
-        let value = short_part.substring(start=eq_idx2 + 1)
-        let canonical_name = resolve_option_name(name, config)
-        if is_boolean_flag(canonical_name, config) {
-          // Unexpected value for flag: keep backward-compat by setting flag true
-          flags[canonical_name] = true
-        } else {
-          options[canonical_name] = value
+      let eq_idx2 = short_part.find("=")
+      match eq_idx2 {
+        Some(idx) => {
+          let name = short_part.substring(end=idx)
+          let value = short_part.substring(start=idx + 1)
+          let canonical_name = resolve_option_name(name, config)
+          if is_boolean_flag(canonical_name, config) {
+            // Unexpected value for flag: keep backward-compat by setting flag true
+            flags[canonical_name] = true
+          } else {
+            options[canonical_name] = value
+          }
+          i = i + 1
+          continue
         }
-        i = i + 1
-        continue
+        None => ()
       }
 
       // Cluster handling: -abc or -Ipath
@@ -197,7 +203,7 @@ pub fn parse_args(args : Array[String], config : ParserConfig) -> ParsedArgs {
 
 ///|
 fn resolve_option_name(name : String, config : ParserConfig) -> String {
-  match config.aliases[name] {
+  match config.aliases.get(name) {
     Some(long_name) => long_name
     None => name
   }

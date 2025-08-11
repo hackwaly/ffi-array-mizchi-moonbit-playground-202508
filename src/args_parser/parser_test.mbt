@@ -7,15 +7,15 @@ test "cluster flags -abc sets a,b,c true" {
   cfg.boolean_flags.push("b")
   cfg.boolean_flags.push("c")
   let res = parse_args(["-abc"], cfg)
-  match res.flags["a"] {
+  match res.flags.get("a") {
     Some(v) => assert_true(v)
     None => assert_true(false)
   }
-  match res.flags["b"] {
+  match res.flags.get("b") {
     Some(v) => assert_true(v)
     None => assert_true(false)
   }
-  match res.flags["c"] {
+  match res.flags.get("c") {
     Some(v) => assert_true(v)
     None => assert_true(false)
   }
@@ -28,15 +28,15 @@ test "cluster + value -abIxx => a=true,b=true,I=xx" {
   cfg.boolean_flags.push("b")
   cfg.string_options.push("I")
   let res = parse_args(["-abIxx"], cfg)
-  match res.flags["a"] {
+  match res.flags.get("a") {
     Some(v) => assert_true(v)
     None => assert_true(false)
   }
-  match res.flags["b"] {
+  match res.flags.get("b") {
     Some(v) => assert_true(v)
     None => assert_true(false)
   }
-  match res.options["I"] {
+  match res.options.get("I") {
     Some(v) => assert_eq(v, "xx")
     None => assert_true(false)
   }
@@ -47,7 +47,7 @@ test "short concatenated value split across argv: -I path" {
   let cfg = ParserConfig::default()
   cfg.string_options.push("I")
   let res = parse_args(["-I", "path"], cfg)
-  match res.options["I"] {
+  match res.options.get("I") {
     Some(v) => assert_eq(v, "path")
     None => assert_true(false)
   }
@@ -58,7 +58,7 @@ test "equals long --output=out" {
   let cfg = ParserConfig::default()
   cfg.string_options.push("output")
   let res = parse_args(["--output=out"], cfg)
-  match res.options["output"] {
+  match res.options.get("output") {
     Some(v) => assert_eq(v, "out")
     None => assert_true(false)
   }
@@ -70,7 +70,7 @@ test "equals short -v=123" {
   // short name 'v' treated as standalone option
   cfg.string_options.push("v")
   let res = parse_args(["-v=123"], cfg)
-  match res.options["v"] {
+  match res.options.get("v") {
     Some(v) => assert_eq(v, "123")
     None => assert_true(false)
   }
@@ -81,12 +81,12 @@ test "flag with equals value keeps flag true (compat): -f=true" {
   let cfg = ParserConfig::default()
   cfg.boolean_flags.push("f")
   let res = parse_args(["-f=true"], cfg)
-  match res.flags["f"] {
+  match res.flags.get("f") {
     Some(v) => assert_true(v)
     None => assert_true(false)
   }
   // Ensure it wasn't recorded as an option
-  match res.options["f"] {
+  match res.options.get("f") {
     Some(_v) => assert_true(false)
     None => assert_true(true)
   }
@@ -99,7 +99,7 @@ test "sentinel -- stops option parsing and preserves following as positionals" {
   cfg.boolean_flags.push("b")
   cfg.boolean_flags.push("c")
   let res = parse_args(["-a", "--", "-bc", "--name=val"], cfg)
-  match res.flags["a"] {
+  match res.flags.get("a") {
     Some(v) => assert_true(v)
     None => assert_true(false)
   }
