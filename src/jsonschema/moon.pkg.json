@@ -1,4 +1,11 @@
 {
   "import": [],
-  "is-main": true
+  "link": {
+    "js": {
+      "exports": [
+        "validate_json_string:validate",
+        "get_validation_errors:getErrors"
+      ]
+    }
+  }
 }

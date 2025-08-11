@@ -2,6 +2,9 @@
   "tasks": {
     "build:js": "moon build --target js --release",
     "check:bindings": "deno check sample-bindings.ts",
-    "it:deno": "deno test -A tests/deno_integration_test.ts"
+    "it:deno": "deno test -A tests/deno_integration_test.ts",
+    "test": "deno test -A tests/",
+    "test:jsonschema": "deno test -A tests/jsonschema_test.ts",
+    "test:ajv": "deno test -A tests/jsonschema_ajv_test.ts"
   }
 }
