@@ -378,20 +378,51 @@ fn generate_class_binding(cls : ClassDeclaration) -> String {
 ///|
 pub fn generate_type_alias_binding(type_alias : TypeAliasDeclaration) -> String {
   let result = StringBuilder::new()
-  result.write_string("// Type alias: ")
-  result.write_string(type_alias.name)
-  result.write_string("\n")
-  // Use new typealias syntax: typealias OriginalType as AliasName
-  result.write_string("pub typealias ")
-  result.write_string(type_to_moonbit(type_alias.type_))
-  result.write_string(" as ")
-  result.write_string(type_alias.name)
-  if type_alias.type_params.length() > 0 {
-    result.write_string("[")
-    result.write_string(type_alias.type_params.join(", "))
-    result.write_string("]")
+  
+  // Check if the type is an object type
+  match type_alias.type_ {
+    Object(props) => {
+      // Generate as a struct for object types
+      result.write_string("pub struct ")
+      result.write_string(type_alias.name)
+      result.write_string(" {\n")
+      result.write_string("  value : JSValue\n")
+      result.write_string("}\n\n")
+      
+      // Generate accessor methods for properties
+      for key, typ in props {
+        result.write_string("pub fn ")
+        result.write_string(type_alias.name)
+        result.write_string("::")
+        result.write_string(key)
+        result.write_string("(self : ")
+        result.write_string(type_alias.name)
+        result.write_string(") -> ")
+        result.write_string(type_to_moonbit(typ))
+        result.write_string(" {\n")
+        result.write_string("  self.value.get(\"")
+        result.write_string(key)
+        result.write_string("\")\n")
+        result.write_string("}\n\n")
+      }
+    }
+    _ => {
+      // Generate as regular type alias for non-object types
+      result.write_string("// Type alias: ")
+      result.write_string(type_alias.name)
+      result.write_string("\n")
+      result.write_string("pub typealias ")
+      result.write_string(type_to_moonbit(type_alias.type_))
+      result.write_string(" as ")
+      result.write_string(type_alias.name)
+      if type_alias.type_params.length() > 0 {
+        result.write_string("[")
+        result.write_string(type_alias.type_params.join(", "))
+        result.write_string("]")
+      }
+      result.write_string("\n\n")
+    }
   }
-  result.write_string("\n\n")
   result.to_string()
 }
 

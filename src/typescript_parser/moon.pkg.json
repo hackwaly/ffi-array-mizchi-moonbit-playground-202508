@@ -1,5 +1,11 @@
 {
   "name": "mizchi/tskit/typescript_parser",
-  "import": [],
-  "test_import": []
+  "targets": {
+    "top.mbt": ["js", "wasm-gc", "wasm"]
+  },
+  "link": {
+    "js": {
+      "exports": ["parse_code"]
+    }
+  }
 }

@@ -1,4 +1,4 @@
-# mizchi/esmbt
+# mizchi/tskit
 
 ES Module Runtime FFI Bindings for MoonBit - JavaScript 相互運用ライブラリ
 

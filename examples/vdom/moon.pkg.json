@@ -1,6 +1,4 @@
 {
-  "import": [
-    "mizchi/esmbt/vdom"
-  ],
+  "import": ["mizchi/tskit/vdom"],
   "is-main": true
 }

@@ -1,6 +1,6 @@
 {
-  "name": "mizchi/esmbt/cli",
-  "import": ["mizchi/esmbt/typescript_parser"],
+  "name": "mizchi/tskit/cli",
+  "import": ["mizchi/tskit/typescript_parser"],
   "test_import": [],
   "is-main": true
 }

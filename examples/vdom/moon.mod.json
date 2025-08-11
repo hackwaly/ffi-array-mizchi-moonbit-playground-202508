@@ -2,6 +2,6 @@
   "name": "vdom-example",
   "version": "0.1.0",
   "deps": {
-    "mizchi/esmbt": { "path": "../.." }
+    "mizchi/tskit": { "path": "../.." }
   }
 }

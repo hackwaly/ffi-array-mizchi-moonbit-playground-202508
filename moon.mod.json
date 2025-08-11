@@ -1,9 +1,9 @@
 {
-  "name": "mizchi/esmbt",
+  "name": "mizchi/tskit",
   "version": "0.1.0",
   "deps": {},
   "readme": "README.md",
-  "repository": "https://github.com/mizchi/esmbt",
+  "repository": "https://github.com/mizchi/tskit",
   "license": "MIT",
   "keywords": ["moonbit", "javascript", "ffi", "runtime", "es-modules"],
   "description": "ES Module Runtime FFI Bindings for MoonBit",

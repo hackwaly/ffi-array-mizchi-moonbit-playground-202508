@@ -608,14 +608,14 @@ Warning: [0035]
       │                      ╰──── Warning: The word `alias` is reserved for possible future use. Please consider using another name.
 ──────╯
 test message from WasmGC
-test mizchi/esmbt/typesrcipt_parser/new_features_test.mbt::parse tuple type failed
+test mizchi/tskit/typesrcipt_parser/new_features_test.mbt::parse tuple type failed
 expect test failed at /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/new_features_test.mbt:37:23-37:63
 Diff:
 ----
 first is numbertrue
 ----
 
-test mizchi/esmbt/typesrcipt_parser/new_features_test.mbt::parse literal types failed
+test mizchi/tskit/typesrcipt_parser/new_features_test.mbt::parse literal types failed
 expect test failed at /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/new_features_test.mbt:71:14-71:55
 Diff:
 ----

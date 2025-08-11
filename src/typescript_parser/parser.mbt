@@ -343,6 +343,14 @@ fn parse_object_type(self : Parser) -> Type? {
   self.next_token() // consume {
   while not(self.current_token_is(Token::RightBrace)) &&
         not(self.current_token_is(Token::Eof)) {
+    // Check for readonly modifier
+    let is_readonly = if self.current_token_is(Token::Readonly) {
+      self.next_token() // consume readonly
+      true
+    } else {
+      false
+    }
+    
     // Parse property name
     let prop_name = match self.current_token {
       Identifier(name) => name
@@ -355,12 +363,11 @@ fn parse_object_type(self : Parser) -> Type? {
     }
     self.next_token() // move to type
     // Parse property type
-    match self.parse_type() {
-      Some(prop_type) => props.set(prop_name, prop_type)
-      // parse_type may or may not advance the token depending on the type
-      // Don't unconditionally advance here
+    let prop_type = match self.parse_type() {
+      Some(t) => if is_readonly { Type::Readonly(t) } else { t }
       None => return None
     }
+    props.set(prop_name, prop_type)
 
     // Check for comma or semicolon separator
     if self.current_token_is(Token::Comma) ||
