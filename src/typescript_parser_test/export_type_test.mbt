@@ -4,7 +4,7 @@ test "parse export type with object literal" {
   let input = "export type Config = { apiUrl: string; timeout: number; }"
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
-  let declarations = parser.parse()
+  let declarations = parser.parse_declarations()
   
   inspect(declarations.length(), content="1")
   
@@ -25,7 +25,7 @@ test "parse export function with object parameters" {
   let input = "export function processData(config: { url: string; method: string }, options: { retry: boolean }): { success: boolean; data: any } { return { success: true, data: null }; }"
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
-  let declarations = parser.parse()
+  let declarations = parser.parse_declarations()
   
   inspect(declarations.length(), content="1")
   
@@ -47,7 +47,7 @@ test "parse type alias with union of objects" {
   let input = "type Result = { ok: true; value: string } | { ok: false; error: Error }"
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
-  let declarations = parser.parse()
+  let declarations = parser.parse_declarations()
   
   inspect(declarations.length(), content="1")
   
@@ -63,7 +63,7 @@ test "parse export interface" {
   let input = "export interface User { id: number; name: string; email?: string; }"
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
-  let declarations = parser.parse()
+  let declarations = parser.parse_declarations()
   
   inspect(declarations.length(), content="1")
   
@@ -85,7 +85,7 @@ test "parse export class" {
   let input = "export class ApiClient { constructor(public baseUrl: string) {} }"
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
-  let declarations = parser.parse()
+  let declarations = parser.parse_declarations()
   
   inspect(declarations.length(), content="1")
   
@@ -106,7 +106,7 @@ test "parse generic type alias" {
   let input = "type Container<T> = { value: T; timestamp: number }"
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
-  let declarations = parser.parse()
+  let declarations = parser.parse_declarations()
   
   // The parser might fail with generics, so just check it parses something
   inspect(declarations.length() > 0, content="true")
@@ -116,7 +116,7 @@ test "parse nested object types" {
   let input = "type DeepObject = { level1: { level2: { level3: string } } }"
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
-  let declarations = parser.parse()
+  let declarations = parser.parse_declarations()
   
   inspect(declarations.length(), content="1")
   
@@ -132,7 +132,7 @@ test "parse multiple export declarations" {
   let input = "export type A = string\nexport function b(): void {}\nexport interface C {}"
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
-  let declarations = parser.parse()
+  let declarations = parser.parse_declarations()
   
   inspect(declarations.length(), content="3")
   
@@ -150,7 +150,7 @@ test "generate FFI for type alias" {
   let input = "type UserID = string"
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
-  let declarations = parser.parse()
+  let declarations = parser.parse_declarations()
   
   inspect(declarations.length(), content="1")
   
@@ -171,7 +171,7 @@ test "parse type reference in function" {
   let input = "type UserData = { name: string; age: number }\nfunction getUser(): UserData { return { name: 'test', age: 25 }; }"
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
-  let declarations = parser.parse()
+  let declarations = parser.parse_declarations()
   
   inspect(declarations.length(), content="2")
   
@@ -200,7 +200,7 @@ test "parse generic interface" {
   let input = "interface Container<T> { value: T; count: number; }"
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
-  let declarations = parser.parse()
+  let declarations = parser.parse_declarations()
   
   inspect(declarations.length(), content="1")
   
@@ -219,7 +219,7 @@ test "parse interface with multiple type parameters" {
   let input = "interface Map<K, V> { get(key: K): V; set(key: K, value: V): void; }"
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
-  let declarations = parser.parse()
+  let declarations = parser.parse_declarations()
   
   inspect(declarations.length(), content="1")
   
@@ -238,7 +238,7 @@ test "parse generic class" {
   let input = "class Stack<T> { private items: T[]; push(item: T): void {} }"
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
-  let declarations = parser.parse()
+  let declarations = parser.parse_declarations()
   
   inspect(declarations.length(), content="1")
   
@@ -256,7 +256,7 @@ test "parse class with extends and generics" {
   let input = "class LinkedList<T> extends List<T> { head: Node<T>; }"
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
-  let declarations = parser.parse()
+  let declarations = parser.parse_declarations()
   
   inspect(declarations.length(), content="1")
   

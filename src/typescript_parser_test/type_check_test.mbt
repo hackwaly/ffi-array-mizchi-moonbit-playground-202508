@@ -5,7 +5,7 @@ test "parse and generate interface FFI" {
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
   
-  let declarations = parser.parse()
+  let declarations = parser.parse_declarations()
   inspect(declarations.length(), content="1")
   
   let ffi = @typescript_parser.generate_ffi_code(declarations)
@@ -22,7 +22,7 @@ test "parse and generate type alias FFI" {
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
   
-  let declarations = parser.parse()
+  let declarations = parser.parse_declarations()
   let ffi = @typescript_parser.generate_ffi_code(declarations)
   
   // typealias が生成されているか確認（新しい構文）
@@ -34,7 +34,7 @@ test "parse and generate function FFI" {
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
   
-  let declarations = parser.parse()
+  let declarations = parser.parse_declarations()
   let ffi = @typescript_parser.generate_ffi_code(declarations)
   
   // 関数バインディングが生成されているか確認
@@ -49,7 +49,7 @@ test "parse and generate class FFI" {
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
   
-  let declarations = parser.parse()
+  let declarations = parser.parse_declarations()
   println("Class test - declarations: \{declarations.length()}")
   match declarations[0] {
     Export(e) => match e.declaration {
@@ -83,7 +83,7 @@ test "generate complex interface with methods" {
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
   
-  let declarations = parser.parse()
+  let declarations = parser.parse_declarations()
   
   let ffi = @typescript_parser.generate_ffi_code(declarations)
   
@@ -98,7 +98,7 @@ test "generate Promise return type" {
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
   
-  let declarations = parser.parse()
+  let declarations = parser.parse_declarations()
   let ffi = @typescript_parser.generate_ffi_code(declarations)
   
   // Promise型が正しく変換されているか確認
@@ -111,7 +111,7 @@ test "generate optional parameters" {
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
   
-  let declarations = parser.parse()
+  let declarations = parser.parse_declarations()
   let ffi = @typescript_parser.generate_ffi_code(declarations)
   
   // オプショナルパラメータが生成されているか確認
@@ -124,7 +124,7 @@ test "generate array types" {
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
   
-  let declarations = parser.parse()
+  let declarations = parser.parse_declarations()
   let ffi = @typescript_parser.generate_ffi_code(declarations)
   
   // 配列型が正しく変換されているか確認
@@ -138,7 +138,7 @@ test "generate union type as Any" {
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
   
-  let declarations = parser.parse()
+  let declarations = parser.parse_declarations()
   let ffi = @typescript_parser.generate_ffi_code(declarations)
   
   // Union型がAnyに変換されているか確認
@@ -151,7 +151,7 @@ test "parse multiple declarations" {
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
   
-  let declarations = parser.parse()
+  let declarations = parser.parse_declarations()
   inspect(declarations.length(), content="2")
   
   let ffi = @typescript_parser.generate_ffi_code(declarations)

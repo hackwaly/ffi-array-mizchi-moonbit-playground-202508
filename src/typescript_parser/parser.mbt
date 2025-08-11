@@ -61,27 +61,22 @@ fn parse_enum_declaration(self : Parser) -> Declaration? {
   } else {
     return None
   }
-  
   self.next_token() // Move past enum
-  
   let name = match self.current_token {
     Identifier(n) => n
     _ => return None
   }
   self.next_token()
-  
   if not(self.current_token_is(Token::LeftBrace)) {
     return None
   }
   self.next_token() // Move past {
-  
   let members : Array[EnumMember] = []
-  
-  while not(self.current_token_is(Token::RightBrace)) && not(self.current_token_is(Token::Eof)) {
+  while not(self.current_token_is(Token::RightBrace)) &&
+        not(self.current_token_is(Token::Eof)) {
     match self.current_token {
       Identifier(member_name) => {
         self.next_token()
-        
         let value = if self.current_token_is(Token::Equals) {
           self.next_token() // Move past =
           match self.current_token {
@@ -94,9 +89,7 @@ fn parse_enum_declaration(self : Parser) -> Declaration? {
         } else {
           None
         }
-        
         members.push(EnumMember::{ name: member_name, value })
-        
         if self.current_token_is(Token::Comma) {
           self.next_token() // Move past ,
         }
@@ -104,12 +97,10 @@ fn parse_enum_declaration(self : Parser) -> Declaration? {
       _ => break
     }
   }
-  
   if not(self.current_token_is(Token::RightBrace)) {
     return None
   }
   self.next_token() // Move past }
-  
   Some(Declaration::Enum(EnumDeclaration::{ name, is_const, members }))
 }
 
@@ -121,33 +112,34 @@ fn parse_namespace_declaration(self : Parser) -> Declaration? {
     return None
   }
   self.next_token() // Move past namespace
-  
   let name = match self.current_token {
     Identifier(n) => n
     _ => return None
   }
   self.next_token()
-  
   if not(self.current_token_is(Token::LeftBrace)) {
     return None
   }
   self.next_token() // Move past {
-  
   let declarations : Array[Declaration] = []
-  
-  while not(self.current_token_is(Token::RightBrace)) && not(self.current_token_is(Token::Eof)) {
+  while not(self.current_token_is(Token::RightBrace)) &&
+        not(self.current_token_is(Token::Eof)) {
     match self.parse_declaration() {
       Some(decl) => declarations.push(decl)
       None => self.next_token() // Skip unknown token
     }
   }
-  
   if not(self.current_token_is(Token::RightBrace)) {
     return None
   }
   self.next_token() // Move past }
-  
-  Some(Declaration::Namespace(NamespaceDeclaration::{ name, declarations, declare: false }))
+  Some(
+    Declaration::Namespace(NamespaceDeclaration::{
+      name,
+      declarations,
+      declare: false,
+    }),
+  )
 }
 
 // Parse module declaration
@@ -158,37 +150,39 @@ fn parse_module_declaration(self : Parser) -> Declaration? {
     return None
   }
   self.next_token() // Move past module
-  
   let name = match self.current_token {
     StringLiteral(n) | Identifier(n) => n
     _ => return None
   }
   self.next_token()
-  
   if not(self.current_token_is(Token::LeftBrace)) {
     return None
   }
   self.next_token() // Move past {
-  
   let declarations : Array[Declaration] = []
-  
-  while not(self.current_token_is(Token::RightBrace)) && not(self.current_token_is(Token::Eof)) {
+  while not(self.current_token_is(Token::RightBrace)) &&
+        not(self.current_token_is(Token::Eof)) {
     match self.parse_declaration() {
       Some(decl) => declarations.push(decl)
       None => self.next_token() // Skip unknown token
     }
   }
-  
   if not(self.current_token_is(Token::RightBrace)) {
     return None
   }
   self.next_token() // Move past }
-  
-  Some(Declaration::Module(ModuleDeclaration::{ name, declarations, declare: false }))
+  Some(
+    Declaration::Module(ModuleDeclaration::{
+      name,
+      declarations,
+      declare: false,
+    }),
+  )
 }
 
 // Parse a simple type
 // TODO: Remove pub after refactoring tests
+
 ///|
 pub fn parse_type(self : Parser) -> Type? {
   // Union は最外層で左結合に統一。右辺は常に Non-Union。
@@ -216,9 +210,7 @@ pub fn parse_type(self : Parser) -> Type? {
         Some(types[0])
       }
     }
-    None => {
-      None
-    }
+    None => None
   }
 }
 
@@ -364,14 +356,10 @@ fn parse_object_type(self : Parser) -> Type? {
     self.next_token() // move to type
     // Parse property type
     match self.parse_type() {
-      Some(prop_type) => {
-        props.set(prop_name, prop_type)
-        // parse_type may or may not advance the token depending on the type
-        // Don't unconditionally advance here
-      }
-      None => {
-        return None
-      }
+      Some(prop_type) => props.set(prop_name, prop_type)
+      // parse_type may or may not advance the token depending on the type
+      // Don't unconditionally advance here
+      None => return None
     }
 
     // Check for comma or semicolon separator
@@ -413,7 +401,8 @@ fn parse_function_type(self : Parser) -> Type? {
       Identifier(param_name) => {
         self.next_token() // move past parameter name
         // Check for optional parameter (but rest params can't be optional)
-        let is_optional = if not(is_rest) && self.current_token_is(Token::Question) {
+        let is_optional = if not(is_rest) &&
+          self.current_token_is(Token::Question) {
           self.next_token() // consume ?
           true
         } else {
@@ -467,18 +456,17 @@ pub fn parse_interface_member(self : Parser) -> InterfaceMember? {
   } else {
     false
   }
-  
   match self.current_token {
     Identifier(name) => {
       let member_name = name
       self.next_token()
-      
+
       // Check if it's a method (has parentheses) or property
       if self.current_token_is(Token::LeftParen) {
         // It's a method
         self.next_token() // Move past (
         let params : Array[Parameter] = []
-        
+
         // Parse parameters
         while not(self.current_token_is(Token::RightParen)) {
           match self.current_token {
@@ -499,7 +487,6 @@ pub fn parse_interface_member(self : Parser) -> InterfaceMember? {
                 optional: false,
                 rest: false,
               })
-              
               if self.current_token_is(Token::Comma) {
                 self.next_token()
               }
@@ -507,12 +494,11 @@ pub fn parse_interface_member(self : Parser) -> InterfaceMember? {
             _ => break
           }
         }
-        
         if not(self.current_token_is(Token::RightParen)) {
           return None
         }
         self.next_token() // Move past )
-        
+
         // Parse return type
         let return_type = if self.current_token_is(Token::Colon) {
           self.next_token() // Move past :
@@ -523,27 +509,26 @@ pub fn parse_interface_member(self : Parser) -> InterfaceMember? {
         } else {
           Type::Void
         }
-        
-        Some(InterfaceMember::Method(MethodMember::{
-          name: member_name,
-          params,
-          return_type,
-          optional: false,
-        }))
+        Some(
+          InterfaceMember::Method(MethodMember::{
+            name: member_name,
+            params,
+            return_type,
+            optional: false,
+          }),
+        )
       } else {
         // It's a property
         let optional = if self.current_token_is(Token::Question) {
           self.next_token() // consume ?
-          true  
+          true
         } else {
           false
         }
-        
         if not(self.current_token_is(Token::Colon)) {
           return None
         }
         self.next_token() // Move past :
-        
         match self.parse_type() {
           Some(typ) =>
             Some(
@@ -572,9 +557,7 @@ fn parse_type_alias(self : Parser) -> TypeAliasDeclaration? {
   self.next_token() // Move past 'type'
   let type_name = match self.current_token {
     Identifier(name) => name
-    _ => {
-      return None
-    }
+    _ => return None
   }
 
   // Handle generic parameters if present
@@ -602,9 +585,7 @@ fn parse_type_alias(self : Parser) -> TypeAliasDeclaration? {
       }
       Some(TypeAliasDeclaration::{ name: type_name, type_params, type_: typ })
     }
-    None => {
-      None
-    }
+    None => None
   }
 }
 
@@ -703,7 +684,7 @@ fn parse_type_arguments(self : Parser) -> Array[Type] {
     if self.current_token_is(Token::GreaterThan) {
       break
     }
-    
+
     // トークンが進んでいない場合のエラー処理
     break
   }
@@ -845,7 +826,7 @@ pub fn parse_function_declaration(self : Parser) -> FunctionDeclaration? {
     params,
     return_type,
     declare: is_declare,
-    is_async: is_async,
+    is_async,
   })
 }
 
@@ -941,15 +922,14 @@ fn parse_function_params(self : Parser) -> Array[Parameter] {
         }
         self.next_token() // move to type
         match self.parse_type() {
-          Some(param_type) => {
+          Some(param_type) =>
             params.push(Parameter::{
               name: param_name,
               type_: param_type,
               optional,
               rest: is_rest,
             })
-            // Don't move past the type here - parse_type already handled it
-          }
+          // Don't move past the type here - parse_type already handled it
           None => break
         }
       }
@@ -964,7 +944,6 @@ fn parse_function_params(self : Parser) -> Array[Parameter] {
       break
     }
   }
-
   params
 }
 
@@ -1049,12 +1028,11 @@ pub fn parse_class(self : Parser) -> ClassDeclaration? {
           self.next_token()
         }
       }
-      None => {
+      None =>
         // If parsing fails, skip the current token and try again
         if not(self.current_token_is(Token::RightBrace)) {
           self.next_token()
         }
-      }
     }
   }
   Some(ClassDeclaration::{
@@ -1206,37 +1184,50 @@ pub fn parse_declaration(self : Parser) -> Declaration? {
       // Declare can be followed by function, class, interface, const, let, var, etc.
       self.next_token() // Move past declare
       match self.current_token {
-        Function | Async => {
+        Function | Async =>
           match self.parse_function_declaration() {
-            Some(func) => {
-              Some(Declaration::Function(FunctionDeclaration::{
-                name: func.name,
-                params: func.params,
-                return_type: func.return_type,
-                declare: true,
-                is_async: func.is_async,
-              }))
-            }
+            Some(func) =>
+              Some(
+                Declaration::Function(FunctionDeclaration::{
+                  name: func.name,
+                  params: func.params,
+                  return_type: func.return_type,
+                  declare: true,
+                  is_async: func.is_async,
+                }),
+              )
             None => None
           }
-        }
-        Const | Let | Var => {
+        Const | Let | Var =>
           match self.parse_variable_declaration() {
-            Some(Variable(v)) => {
-              Some(Declaration::Variable(VariableDeclaration::{
-                name: v.name,
-                type_: v.type_,
-                kind: v.kind,
-                declare: true,
-              }))
-            }
+            Some(Variable(v)) =>
+              Some(
+                Declaration::Variable(VariableDeclaration::{
+                  name: v.name,
+                  type_: v.type_,
+                  kind: v.kind,
+                  declare: true,
+                }),
+              )
             other => other
           }
-        }
-        Class => 
-          self.parse_class().map(fn(cls) { Declaration::Class(cls) })
-        Interface => 
-          self.parse_interface().map(fn(iface) { Declaration::Interface(iface) })
+        Class => self.parse_class().map(fn(cls) { Declaration::Class(cls) })
+        Interface =>
+          self
+          .parse_interface()
+          .map(fn(iface) { Declaration::Interface(iface) })
+        Module =>
+          match self.parse_module_declaration() {
+            Some(Module(mod_decl)) =>
+              Some(
+                Declaration::Module(ModuleDeclaration::{
+                  name: mod_decl.name,
+                  declarations: mod_decl.declarations,
+                  declare: true,
+                }),
+              )
+            other => other
+          }
         _ => None
       }
     }
@@ -1248,7 +1239,9 @@ pub fn parse_declaration(self : Parser) -> Declaration? {
       .map(fn(func) { Declaration::Function(func) })
     Class => self.parse_class().map(fn(cls) { Declaration::Class(cls) })
     Type =>
-      self.parse_type_alias().map(fn(type_alias) { Declaration::TypeAlias(type_alias) })
+      self
+      .parse_type_alias()
+      .map(fn(type_alias) { Declaration::TypeAlias(type_alias) })
     Const | Let | Var => self.parse_variable_declaration()
     Enum => self.parse_enum_declaration()
     Namespace => self.parse_namespace_declaration()
@@ -1448,7 +1441,9 @@ fn parse_import_declaration(self : Parser) -> Declaration? {
     StringLiteral(source) => source
     _ => return None
   }
-  Some(Declaration::Import(ImportDeclaration::{ specifiers, from, is_type_only }))
+  Some(
+    Declaration::Import(ImportDeclaration::{ specifiers, from, is_type_only }),
+  )
 }
 
 // Helper to parse named imports
@@ -1573,38 +1568,54 @@ fn skip_expression(self : Parser) -> Unit {
 // TypeScriptファイル全体をパース
 
 // parse: TypeScriptファイル全体をパース（主要API）
+
 ///|
-pub fn parse(self : Parser) -> Array[Declaration] {
+pub fn parse(self : Parser) -> Program {
+  let declarations = self.parse_typescript_file()
+  let statements = Array::new()
+  for decl in declarations {
+    statements.push(Statement::Declaration(decl))
+  }
+  Program::{ statements }
+}
+
+// parse_declarations: 互換性のためにDeclarationの配列を返す
+
+///|
+pub fn parse_declarations(self : Parser) -> Array[Declaration] {
   self.parse_typescript_file()
 }
 
 // parse_dts: .d.tsファイルをパース（主要API）
+
 ///|
 pub fn parse_dts(self : Parser) -> DtsFile {
   let declarations = self.parse_typescript_file()
-  { declarations : declarations }
+  DtsFile::{ declarations }
 }
 
 // parse_expr: 単一の型式をパース（主要API）
+
 ///|
 pub fn parse_expr(self : Parser) -> Type? {
   self.parse_type()
 }
 
 // 内部実装: TypeScriptファイル全体をパース
+
+///|
 fn parse_typescript_file(self : Parser) -> Array[Declaration] {
   let declarations : Array[Declaration] = []
   while not(self.current_token_is(Token::Eof)) {
     match self.parse_declaration() {
       Some(decl) => declarations.push(decl)
-      None => {
+      None =>
         // パースできなかった場合は適切にスキップ
         match self.current_token {
-          LeftBrace => self.skip_block()  // ブロックをスキップ
-          Semicolon => self.next_token()  // セミコロンをスキップ
-          _ => self.next_token()  // その他は1トークン進める
+          LeftBrace => self.skip_block() // ブロックをスキップ
+          Semicolon => self.next_token() // セミコロンをスキップ
+          _ => self.next_token() // その他は1トークン進める
         }
-      }
     }
   }
   declarations

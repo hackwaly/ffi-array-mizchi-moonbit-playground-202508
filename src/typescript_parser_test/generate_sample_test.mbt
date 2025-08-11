@@ -41,7 +41,7 @@ test "generate FFI for comprehensive sample" {
   let parser = Parser::new(lexer)
   
   // Parse the TypeScript declarations
-  let declarations = parser.parse()
+  let declarations = parser.parse_declarations()
   
   println("=== Parsing Results ===")
   println("Parsed \{declarations.length()} declarations\n")

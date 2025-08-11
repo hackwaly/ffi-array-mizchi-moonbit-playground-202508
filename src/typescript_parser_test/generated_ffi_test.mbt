@@ -15,7 +15,7 @@ test "generate and save FFI code for type checking" {
   
   let lexer = Lexer::new(sample_dts)
   let parser = Parser::new(lexer)
-  let declarations = parser.parse()
+  let declarations = parser.parse_declarations()
   
   let ffi_code = @typescript_parser.generate_ffi_code(declarations)
   

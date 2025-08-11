@@ -5,7 +5,7 @@ test "parse rest parameter" {
   let input = "function spread(...args: any[]): void {}"
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
-  let declarations = parser.parse()
+  let declarations = parser.parse_declarations()
   inspect(declarations.length(), content="1")
   match declarations[0] {
     Function(func) => {
@@ -23,7 +23,7 @@ test "parse tuple type" {
   let input = "type Point = [number, number]"
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
-  let declarations = parser.parse()
+  let declarations = parser.parse_declarations()
   inspect(declarations.length(), content="1")
   match declarations[0] {
     TypeAlias(type_alias) => {
@@ -52,7 +52,7 @@ test "parse literal types" {
   let input = "type Status = \"success\" | \"error\" | \"pending\""
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
-  let declarations = parser.parse()
+  let declarations = parser.parse_declarations()
   inspect(declarations.length(), content="1")
   match declarations[0] {
     TypeAlias(type_alias) => {
@@ -77,7 +77,7 @@ test "parse declare function" {
   let input = "declare function external(x: number): string"
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
-  let declarations = parser.parse()
+  let declarations = parser.parse_declarations()
   inspect(declarations.length(), content="1")
   match declarations[0] {
     Function(func) => {
@@ -94,7 +94,7 @@ test "parse export default" {
   let input = "export default function main(): void {}"
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
-  let declarations = parser.parse()
+  let declarations = parser.parse_declarations()
   inspect(declarations.length(), content="1")
   match declarations[0] {
     Export(export_decl) =>
@@ -111,7 +111,7 @@ test "parse class implements" {
   let input = "class MyClass implements Interface1, Interface2 {}"
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
-  let declarations = parser.parse()
+  let declarations = parser.parse_declarations()
   inspect(declarations.length(), content="1")
   match declarations[0] {
     Class(cls) => {
@@ -129,7 +129,7 @@ test "parse optional parameter" {
   let input = "function optional(x?: string): void {}"
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
-  let declarations = parser.parse()
+  let declarations = parser.parse_declarations()
   inspect(declarations.length(), content="1")
   match declarations[0] {
     Function(func) => {

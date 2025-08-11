@@ -4,7 +4,7 @@ test "parse default import" {
   let input = "import React from 'react'"
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
-  let declarations = parser.parse()
+  let declarations = parser.parse_declarations()
   
   inspect(declarations.length(), content="1")
   
@@ -25,7 +25,7 @@ test "parse named imports" {
   let input = "import { useState, useEffect } from 'react'"
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
-  let declarations = parser.parse()
+  let declarations = parser.parse_declarations()
   
   inspect(declarations.length(), content="1")
   
@@ -42,7 +42,7 @@ test "parse import with alias" {
   let input = "import { Component as Comp } from 'react'"
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
-  let declarations = parser.parse()
+  let declarations = parser.parse_declarations()
   
   inspect(declarations.length(), content="1")
   
@@ -68,7 +68,7 @@ test "parse namespace import" {
   let input = "import * as React from 'react'"
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
-  let declarations = parser.parse()
+  let declarations = parser.parse_declarations()
   
   inspect(declarations.length(), content="1")
   
@@ -88,7 +88,7 @@ test "parse named export" {
   let input = "export { foo, bar as baz }"
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
-  let declarations = parser.parse()
+  let declarations = parser.parse_declarations()
   
   inspect(declarations.length(), content="1")
   
@@ -110,7 +110,7 @@ test "parse re-export" {
   let input = "export { Component } from 'react'"
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
-  let declarations = parser.parse()
+  let declarations = parser.parse_declarations()
   
   inspect(declarations.length(), content="1")
   
@@ -131,7 +131,7 @@ test "parse export all" {
   let input = "export * from 'utils'"
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
-  let declarations = parser.parse()
+  let declarations = parser.parse_declarations()
   
   inspect(declarations.length(), content="1")
   
@@ -150,7 +150,7 @@ test "parse mixed import" {
   let input = "import React, { useState } from 'react'"
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
-  let declarations = parser.parse()
+  let declarations = parser.parse_declarations()
   
   inspect(declarations.length(), content="1")
   

@@ -7,7 +7,7 @@
 pub fn parse_typescript(code : String) -> String {
   let lexer = @typescript_parser.Lexer::new(code)
   let parser = @typescript_parser.Parser::new(lexer)
-  let declarations = parser.parse_typescript_file()
+  let declarations = parser.parse_declarations()
 
   // Convert AST to JSON string
   declarations_to_json(declarations)
@@ -19,7 +19,7 @@ pub fn parse_typescript(code : String) -> String {
 pub fn generate_ffi(code : String) -> String {
   let lexer = @typescript_parser.Lexer::new(code)
   let parser = @typescript_parser.Parser::new(lexer)
-  let declarations = parser.parse_typescript_file()
+  let declarations = parser.parse_declarations()
   @typescript_parser.generate_ffi_code(declarations)
 }
 
