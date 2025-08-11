@@ -31,7 +31,7 @@ pub enum InterfaceItem {
 pub struct World {
   name : String
   items : Array[WorldItem]
-} derive(Debug, Show, Eq)
+} derive(Show, Eq)
 
 // Items within a world
 pub enum WorldItem {

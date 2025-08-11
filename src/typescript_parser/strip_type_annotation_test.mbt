@@ -5,13 +5,13 @@ test "strip_type_annotations_simple_function" {
   let func = FunctionDeclaration::{
     name: "add",
     params: [
-      {
+      @typescript_parser.Parameter::{
         name: "a",
         type_: @typescript_parser.Number,
         optional: false,
         rest: false,
       },
-      {
+      @typescript_parser.Parameter::{
         name: "b",
         type_: @typescript_parser.Number,
         optional: false,
@@ -31,7 +31,7 @@ test "strip_type_annotations_async_function" {
   let func = FunctionDeclaration::{
     name: "fetchData",
     params: [
-      {
+      @typescript_parser.Parameter::{
         name: "url",
         type_: @typescript_parser.String,
         optional: false,
@@ -53,7 +53,7 @@ test "strip_type_annotations_rest_parameter" {
   let func = FunctionDeclaration::{
     name: "sum",
     params: [
-      {
+      @typescript_parser.Parameter::{
         name: "numbers",
         type_: @typescript_parser.Number,
         optional: false,
@@ -73,13 +73,13 @@ test "strip_type_annotations_optional_parameter" {
   let func = FunctionDeclaration::{
     name: "greet",
     params: [
-      {
+      @typescript_parser.Parameter::{
         name: "name",
         type_: @typescript_parser.String,
         optional: false,
         rest: false,
       },
-      {
+      @typescript_parser.Parameter::{
         name: "title",
         type_: @typescript_parser.String,
         optional: true,
@@ -102,13 +102,13 @@ test "generate_function_binding_with_inline_implementation" {
   let func = FunctionDeclaration::{
     name: "multiply",
     params: [
-      {
+      @typescript_parser.Parameter::{
         name: "x",
         type_: @typescript_parser.Number,
         optional: false,
         rest: false,
       },
-      {
+      @typescript_parser.Parameter::{
         name: "y",
         type_: @typescript_parser.Number,
         optional: false,
@@ -121,7 +121,7 @@ test "generate_function_binding_with_inline_implementation" {
   }
   let binding = generate_function_binding(
     func,
-    inline_implementation=Some(true),
+    inline_implementation=true,
   )
   inspect(
     binding.contains(
@@ -138,13 +138,13 @@ test "generate_function_binding_reference_only" {
   let func = FunctionDeclaration::{
     name: "divide",
     params: [
-      {
+      @typescript_parser.Parameter::{
         name: "a",
         type_: @typescript_parser.Number,
         optional: false,
         rest: false,
       },
-      {
+      @typescript_parser.Parameter::{
         name: "b",
         type_: @typescript_parser.Number,
         optional: false,
@@ -157,7 +157,7 @@ test "generate_function_binding_reference_only" {
   }
   let binding = generate_function_binding(
     func,
-    inline_implementation=Some(false),
+    inline_implementation=false,
   )
   inspect(
     binding,
