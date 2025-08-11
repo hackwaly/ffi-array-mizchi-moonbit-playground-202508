@@ -3,7 +3,7 @@ test "parse import type namespace" {
   let input = "import type * as mbt from './x.d.ts'"
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
-  let declarations = parser.parse_typescript_file()
+  let declarations = parser.parse()
   inspect(declarations.length(), content="1")
   match declarations[0] {
     Import(import_decl) => {

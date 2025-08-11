@@ -66,7 +66,7 @@ test "generate FFI binding" {
   
   match parser.parse_declaration() {
     Some(Function(func)) => {
-      let binding = generate_function_binding(func)
+      let binding = @typescript_parser.generate_function_binding(func)
       inspect(binding.contains("extern \"js\" fn multiply"), content="true")
       inspect(binding.contains("Double"), content="true")
     }

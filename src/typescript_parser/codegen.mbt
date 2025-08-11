@@ -134,10 +134,10 @@ pub fn type_to_moonbit(typ : Type) -> String {
 // パラメータをMoonBit形式に変換
 
 ///|
-pub fn parameter_to_moonbit(param : Parameter) -> String {
+fn parameter_to_moonbit(param : Parameter) -> String {
   let type_str = type_to_moonbit(param.type_)
   if param.optional {
-    param.name + " : Option[" + type_str + "]"
+    param.name + " : " + type_str + "?"
   } else if param.rest {
     param.name + " : Array[" + type_str + "]"
   } else {
@@ -148,7 +148,7 @@ pub fn parameter_to_moonbit(param : Parameter) -> String {
 // TypeScriptの型アノテーションを除去して純粋なJavaScriptコードを生成
 
 ///|
-pub fn strip_type_annotations(func : FunctionDeclaration) -> String {
+fn strip_type_annotations(func : FunctionDeclaration) -> String {
   let result = StringBuilder::new()
   
   // async関数の場合
@@ -187,7 +187,7 @@ pub fn strip_type_annotations(func : FunctionDeclaration) -> String {
 // JavaScriptのインライン実装コードを生成（型アノテーションなし）
 
 ///|
-pub fn generate_js_implementation(func : FunctionDeclaration) -> String {
+fn generate_js_implementation(func : FunctionDeclaration) -> String {
   let result = StringBuilder::new()
   
   // 簡単な実装として、関数シグネチャのみを生成
@@ -241,7 +241,7 @@ pub fn generate_function_binding(
 // インターフェースからstructとメソッドを生成
 
 ///|
-pub fn generate_interface_binding(iface : InterfaceDeclaration) -> String {
+fn generate_interface_binding(iface : InterfaceDeclaration) -> String {
   let result = StringBuilder::new()
 
   // struct定義
@@ -299,7 +299,7 @@ pub fn generate_interface_binding(iface : InterfaceDeclaration) -> String {
 // クラスからFFIバインディングを生成
 
 ///|
-pub fn generate_class_binding(cls : ClassDeclaration) -> String {
+fn generate_class_binding(cls : ClassDeclaration) -> String {
   let result = StringBuilder::new()
 
   // struct定義
@@ -309,7 +309,7 @@ pub fn generate_class_binding(cls : ClassDeclaration) -> String {
   result.write_string("  value : JSValue\n")
   result.write_string("}\n\n")
 
-  // コンストラクタがあれば生成
+  // メンバーの生成
   for m in cls.members {
     match m {
       ClassConstructor(ctor) => {
@@ -328,7 +328,46 @@ pub fn generate_class_binding(cls : ClassDeclaration) -> String {
         result.write_string("\")}\n")
         result.write_string("}\n\n")
       }
-      _ => ()
+      ClassProperty(prop) => {
+        // プロパティのゲッター
+        result.write_string("pub fn ")
+        result.write_string(cls.name)
+        result.write_string("::")
+        result.write_string(prop.name)
+        result.write_string("(self : ")
+        result.write_string(cls.name)
+        result.write_string(") -> ")
+        result.write_string(type_to_moonbit(prop.type_))
+        result.write_string(" {\n")
+        result.write_string("  self.value.")
+        result.write_string(prop.name)
+        result.write_string("\n")
+        result.write_string("}\n\n")
+      }
+      ClassMethod(meth) => {
+        // メソッド
+        result.write_string("pub fn ")
+        result.write_string(cls.name)
+        result.write_string("::")
+        result.write_string(meth.name)
+        result.write_string("(self : ")
+        result.write_string(cls.name)
+        if meth.params.length() > 0 {
+          result.write_string(", ")
+          let params = meth.params.map(fn(p) { parameter_to_moonbit(p) })
+          result.write_string(params.join(", "))
+        }
+        result.write_string(") -> ")
+        result.write_string(type_to_moonbit(meth.return_type))
+        result.write_string(" {\n")
+        result.write_string("  self.value.")
+        result.write_string(meth.name)
+        result.write_string("(")
+        let param_names = meth.params.map(fn(p) { p.name })
+        result.write_string(param_names.join(", "))
+        result.write_string(")\n")
+        result.write_string("}\n\n")
+      }
     }
   }
   result.to_string()
@@ -382,12 +421,23 @@ pub fn generate_ffi_code(declarations : Array[Declaration]) -> String {
       }
       Export(export_decl) =>
         match export_decl.declaration {
-          Some(inner_decl) => {
-            // Export内の宣言を処理
-            let code = generate_ffi_code([inner_decl])
-            result.write_string(code)
+          Some(Function(func)) => {
+            result.write_string(generate_function_binding(func))
+            result.write_string("\n")
           }
-          None => ()
+          Some(Interface(iface)) => {
+            result.write_string(generate_interface_binding(iface))
+            result.write_string("\n")
+          }
+          Some(Class(cls)) => {
+            result.write_string(generate_class_binding(cls))
+            result.write_string("\n")
+          }
+          Some(TypeAlias(type_alias)) => {
+            result.write_string(generate_type_alias_binding(type_alias))
+            result.write_string("\n")
+          }
+          _ => ()
         }
       _ => ()
     }

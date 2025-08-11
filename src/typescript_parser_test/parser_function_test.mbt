@@ -9,11 +9,11 @@ test "parser parses simple function declaration" {
       assert_eq(func.params.length(), 1)
       assert_eq(func.params[0].name, "name")
       match func.params[0].type_ {
-        Type::String => assert_true(true)
+        @typescript_parser.Type::String => assert_true(true)
         _ => assert_true(false)
       }
       match func.return_type {
-        Type::String => assert_true(true)
+        @typescript_parser.Type::String => assert_true(true)
         _ => assert_true(false)
       }
     }
@@ -33,18 +33,18 @@ test "parser parses function with multiple parameters" {
       
       assert_eq(func.params[0].name, "a")
       match func.params[0].type_ {
-        Type::Number => assert_true(true)
+        @typescript_parser.Type::Number => assert_true(true)
         _ => assert_true(false)
       }
       
       assert_eq(func.params[1].name, "b")
       match func.params[1].type_ {
-        Type::Number => assert_true(true)
+        @typescript_parser.Type::Number => assert_true(true)
         _ => assert_true(false)
       }
       
       match func.return_type {
-        Type::Number => assert_true(true)
+        @typescript_parser.Type::Number => assert_true(true)
         _ => assert_true(false)
       }
     }
@@ -64,11 +64,11 @@ test "parser parses function with optional parameter" {
       assert_eq(func.params[0].name, "name")
       assert_eq(func.params[0].optional, true)
       match func.params[0].type_ {
-        Type::String => assert_true(true)
+        @typescript_parser.Type::String => assert_true(true)
         _ => assert_true(false)
       }
       match func.return_type {
-        Type::Void => assert_true(true)
+        @typescript_parser.Type::Void => assert_true(true)
         _ => assert_true(false)
       }
     }
@@ -88,7 +88,7 @@ test "parser parses exported function" {
           assert_eq(func.name, "hello")
           assert_eq(func.params.length(), 0)
           match func.return_type {
-            Type::Void => assert_true(true)
+            @typescript_parser.Type::Void => assert_true(true)
             _ => assert_true(false)
           }
         }
@@ -109,7 +109,7 @@ test "parser parses function without return type" {
       assert_eq(func.name, "doSomething")
       assert_eq(func.params.length(), 0)
       match func.return_type {
-        Type::Void => assert_true(true)  // Default to void
+        @typescript_parser.Type::Void => assert_true(true)  // Default to void
         _ => assert_true(false)
       }
     }

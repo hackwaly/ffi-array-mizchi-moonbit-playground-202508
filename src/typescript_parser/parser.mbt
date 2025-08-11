@@ -49,7 +49,7 @@ fn expect_peek(self : Parser, token : Token) -> Bool {
 // Parse enum declaration
 
 ///|
-pub fn parse_enum_declaration(self : Parser) -> Declaration? {
+fn parse_enum_declaration(self : Parser) -> Declaration? {
   let is_const = if self.current_token_is(Token::Const) {
     self.next_token() // Move past const
     if not(self.current_token_is(Token::Enum)) {
@@ -116,7 +116,7 @@ pub fn parse_enum_declaration(self : Parser) -> Declaration? {
 // Parse namespace declaration
 
 ///|
-pub fn parse_namespace_declaration(self : Parser) -> Declaration? {
+fn parse_namespace_declaration(self : Parser) -> Declaration? {
   if not(self.current_token_is(Token::Namespace)) {
     return None
   }
@@ -153,7 +153,7 @@ pub fn parse_namespace_declaration(self : Parser) -> Declaration? {
 // Parse module declaration
 
 ///|
-pub fn parse_module_declaration(self : Parser) -> Declaration? {
+fn parse_module_declaration(self : Parser) -> Declaration? {
   if not(self.current_token_is(Token::Module)) {
     return None
   }
@@ -188,7 +188,7 @@ pub fn parse_module_declaration(self : Parser) -> Declaration? {
 }
 
 // Parse a simple type
-
+// TODO: Remove pub after refactoring tests
 ///|
 pub fn parse_type(self : Parser) -> Type? {
   // Union は最外層で左結合に統一。右辺は常に Non-Union。
@@ -460,30 +460,102 @@ fn parse_function_type(self : Parser) -> Type? {
 
 ///|
 pub fn parse_interface_member(self : Parser) -> InterfaceMember? {
+  // Check for readonly modifier
+  let is_readonly = if self.current_token_is(Token::Readonly) {
+    self.next_token()
+    true
+  } else {
+    false
+  }
+  
   match self.current_token {
     Identifier(name) => {
-      let property_name = name
-      let optional = if self.peek_token_is(Token::Question) {
-        self.next_token() // consume ?
-        true
+      let member_name = name
+      self.next_token()
+      
+      // Check if it's a method (has parentheses) or property
+      if self.current_token_is(Token::LeftParen) {
+        // It's a method
+        self.next_token() // Move past (
+        let params : Array[Parameter] = []
+        
+        // Parse parameters
+        while not(self.current_token_is(Token::RightParen)) {
+          match self.current_token {
+            Identifier(param_name) => {
+              self.next_token()
+              let param_type = if self.current_token_is(Token::Colon) {
+                self.next_token() // Move past :
+                match self.parse_type() {
+                  Some(t) => t
+                  None => Type::Any
+                }
+              } else {
+                Type::Any
+              }
+              params.push(Parameter::{
+                name: param_name,
+                type_: param_type,
+                optional: false,
+                rest: false,
+              })
+              
+              if self.current_token_is(Token::Comma) {
+                self.next_token()
+              }
+            }
+            _ => break
+          }
+        }
+        
+        if not(self.current_token_is(Token::RightParen)) {
+          return None
+        }
+        self.next_token() // Move past )
+        
+        // Parse return type
+        let return_type = if self.current_token_is(Token::Colon) {
+          self.next_token() // Move past :
+          match self.parse_type() {
+            Some(t) => t
+            None => Type::Void
+          }
+        } else {
+          Type::Void
+        }
+        
+        Some(InterfaceMember::Method(MethodMember::{
+          name: member_name,
+          params,
+          return_type,
+          optional: false,
+        }))
       } else {
-        false
-      }
-      if not(self.expect_peek(Token::Colon)) {
-        return None
-      }
-      self.next_token() // Move to type
-      match self.parse_type() {
-        Some(typ) =>
-          Some(
-            InterfaceMember::Property(PropertyMember::{
-              name: property_name,
-              type_: typ,
-              optional,
-              readonly_: false,
-            }),
-          )
-        None => None
+        // It's a property
+        let optional = if self.current_token_is(Token::Question) {
+          self.next_token() // consume ?
+          true  
+        } else {
+          false
+        }
+        
+        if not(self.current_token_is(Token::Colon)) {
+          return None
+        }
+        self.next_token() // Move past :
+        
+        match self.parse_type() {
+          Some(typ) =>
+            Some(
+              InterfaceMember::Property(PropertyMember::{
+                name: member_name,
+                type_: typ,
+                optional,
+                readonly_: is_readonly,
+              }),
+            )
+          None => None
+        }
       }
     }
     _ => None
@@ -493,7 +565,7 @@ pub fn parse_interface_member(self : Parser) -> InterfaceMember? {
 // Parse type alias: type Name = Type
 
 ///|
-pub fn parse_type_alias(self : Parser) -> TypeAliasDeclaration? {
+fn parse_type_alias(self : Parser) -> TypeAliasDeclaration? {
   if not(self.current_token_is(Token::Type)) {
     return None
   }
@@ -773,7 +845,7 @@ pub fn parse_function_declaration(self : Parser) -> FunctionDeclaration? {
     params,
     return_type,
     declare: is_declare,
-    is_async: false,
+    is_async: is_async,
   })
 }
 
@@ -970,15 +1042,19 @@ pub fn parse_class(self : Parser) -> ClassDeclaration? {
   while not(self.current_token_is(Token::RightBrace)) &&
         not(self.current_token_is(Token::Eof)) {
     match self.parse_class_member() {
-      Some(class_mem) => members.push(class_mem)
-      None => break
-    }
-
-    // Skip optional semicolon
-    if self.current_token_is(Token::Semicolon) {
-      self.next_token()
-    } else if not(self.current_token_is(Token::RightBrace)) {
-      self.next_token()
+      Some(class_mem) => {
+        members.push(class_mem)
+        // Skip optional semicolon or continue to next member
+        if self.current_token_is(Token::Semicolon) {
+          self.next_token()
+        }
+      }
+      None => {
+        // If parsing fails, skip the current token and try again
+        if not(self.current_token_is(Token::RightBrace)) {
+          self.next_token()
+        }
+      }
     }
   }
   Some(ClassDeclaration::{
@@ -994,7 +1070,7 @@ pub fn parse_class(self : Parser) -> ClassDeclaration? {
 // Parse class member
 
 ///|
-fn parse_class_member(self : Parser) -> ClassMember? {
+pub fn parse_class_member(self : Parser) -> ClassMember? {
   // Check for visibility modifier
   let visibility = match self.current_token {
     Public => {
@@ -1126,12 +1202,44 @@ fn parse_class_member(self : Parser) -> ClassMember? {
 ///|
 pub fn parse_declaration(self : Parser) -> Declaration? {
   match self.current_token {
-    Declare =>
-      // Declare can be followed by function, class, interface, etc.
-      // Store the fact that this is a declare before parsing  
-      self
-      .parse_function_declaration()
-      .map(fn(func) { Declaration::Function(func) })
+    Declare => {
+      // Declare can be followed by function, class, interface, const, let, var, etc.
+      self.next_token() // Move past declare
+      match self.current_token {
+        Function | Async => {
+          match self.parse_function_declaration() {
+            Some(func) => {
+              Some(Declaration::Function(FunctionDeclaration::{
+                name: func.name,
+                params: func.params,
+                return_type: func.return_type,
+                declare: true,
+                is_async: func.is_async,
+              }))
+            }
+            None => None
+          }
+        }
+        Const | Let | Var => {
+          match self.parse_variable_declaration() {
+            Some(Variable(v)) => {
+              Some(Declaration::Variable(VariableDeclaration::{
+                name: v.name,
+                type_: v.type_,
+                kind: v.kind,
+                declare: true,
+              }))
+            }
+            other => other
+          }
+        }
+        Class => 
+          self.parse_class().map(fn(cls) { Declaration::Class(cls) })
+        Interface => 
+          self.parse_interface().map(fn(iface) { Declaration::Interface(iface) })
+        _ => None
+      }
+    }
     Interface =>
       self.parse_interface().map(fn(iface) { Declaration::Interface(iface) })
     Function | Async =>
@@ -1425,14 +1533,17 @@ fn parse_variable_declaration(self : Parser) -> Declaration? {
     self.next_token()
   }
 
-  // 簡易的に関数宣言として扱う（変数に代入された関数の場合）
+  // 変数宣言として返す
   Some(
-    Declaration::Function(FunctionDeclaration::{
+    Declaration::Variable(VariableDeclaration::{
       name: var_name,
-      params: [],
-      return_type: var_type,
+      type_: var_type,
+      kind: match _kind {
+        "const" => VariableKind::Const
+        "let" => VariableKind::Let
+        _ => VariableKind::Var
+      },
       declare: false,
-      is_async: false,
     }),
   )
 }
@@ -1461,8 +1572,27 @@ fn skip_expression(self : Parser) -> Unit {
 
 // TypeScriptファイル全体をパース
 
+// parse: TypeScriptファイル全体をパース（主要API）
 ///|
-pub fn parse_typescript_file(self : Parser) -> Array[Declaration] {
+pub fn parse(self : Parser) -> Array[Declaration] {
+  self.parse_typescript_file()
+}
+
+// parse_dts: .d.tsファイルをパース（主要API）
+///|
+pub fn parse_dts(self : Parser) -> DtsFile {
+  let declarations = self.parse_typescript_file()
+  { declarations : declarations }
+}
+
+// parse_expr: 単一の型式をパース（主要API）
+///|
+pub fn parse_expr(self : Parser) -> Type? {
+  self.parse_type()
+}
+
+// 内部実装: TypeScriptファイル全体をパース
+fn parse_typescript_file(self : Parser) -> Array[Declaration] {
   let declarations : Array[Declaration] = []
   while not(self.current_token_is(Token::Eof)) {
     match self.parse_declaration() {

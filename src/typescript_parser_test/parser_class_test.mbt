@@ -25,7 +25,7 @@ test "parser parses class with property" {
         ClassProperty(prop) => {
           assert_eq(prop.name, "name")
           match prop.type_ {
-            Type::String => assert_true(true)
+            @typescript_parser.Type::String => assert_true(true)
             _ => assert_true(false)
           }
         }
@@ -50,7 +50,7 @@ test "parser parses class with method" {
           assert_eq(m.name, "add")
           assert_eq(m.params.length(), 2)
           match m.return_type {
-            Type::Number => assert_true(true)
+            @typescript_parser.Type::Number => assert_true(true)
             _ => assert_true(false)
           }
         }
@@ -75,7 +75,7 @@ test "parser parses class with constructor" {
           assert_eq(ctor.params.length(), 1)
           assert_eq(ctor.params[0].name, "name")
           match ctor.params[0].type_ {
-            Type::String => assert_true(true)
+            @typescript_parser.Type::String => assert_true(true)
             _ => assert_true(false)
           }
         }

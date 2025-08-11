@@ -3,8 +3,8 @@ test "parser parses simple type" {
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
   
-  match parser.parse_type() {
-    Some(Type::String) => assert_true(true)
+  match parser.parse_expr() {
+    Some(@typescript_parser.Type::String) => assert_true(true)
     _ => assert_true(false)
   }
 }
@@ -14,8 +14,8 @@ test "parser parses type reference" {
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
   
-  match parser.parse_type() {
-    Some(Type::TypeReference(name, _)) => assert_eq(name, "MyType")
+  match parser.parse_expr() {
+    Some(@typescript_parser.Type::TypeReference(name, _)) => assert_eq(name, "MyType")
     _ => assert_true(false)
   }
 }
@@ -29,7 +29,7 @@ test "parser parses interface property" {
     Some(Property(prop)) => {
       assert_eq(prop.name, "name")
       match prop.type_ {
-        Type::String => assert_true(true)
+        @typescript_parser.Type::String => assert_true(true)
         _ => assert_true(false)
       }
     }
@@ -50,7 +50,7 @@ test "parser parses simple interface" {
         Property(prop) => {
           assert_eq(prop.name, "name")
           match prop.type_ {
-            Type::String => assert_true(true)
+            @typescript_parser.Type::String => assert_true(true)
             _ => assert_true(false)
           }
         }
@@ -76,7 +76,7 @@ test "parser parses interface with multiple properties" {
         Property(prop) => {
           assert_eq(prop.name, "name")
           match prop.type_ {
-            Type::String => assert_true(true)
+            @typescript_parser.Type::String => assert_true(true)
             _ => assert_true(false)
           }
         }
@@ -88,7 +88,7 @@ test "parser parses interface with multiple properties" {
         Property(prop) => {
           assert_eq(prop.name, "age")
           match prop.type_ {
-            Type::Number => assert_true(true)
+            @typescript_parser.Type::Number => assert_true(true)
             _ => assert_true(false)
           }
         }

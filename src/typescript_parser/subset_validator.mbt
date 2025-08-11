@@ -25,7 +25,7 @@ pub fn ValidationResult::add_warning(self : ValidationResult, warning : String) 
 }
 
 // Check if a type is supported
-pub fn is_supported_type(typ : Type) -> Bool {
+fn is_supported_type(typ : Type) -> Bool {
   match typ {
     // Primitive types
     String | Number | Boolean | Void | Null | Undefined => true
@@ -44,7 +44,16 @@ pub fn is_supported_type(typ : Type) -> Bool {
       // Check for supported type references
       match name {
         // Promise is supported
-        "Promise" => type_args.all(fn(t) { is_supported_type(t) })
+        "Promise" => {
+          let mut all_supported = true
+          for t in type_args {
+            if not(is_supported_type(t)) {
+              all_supported = false
+              break
+            }
+          }
+          all_supported
+        }
         
         // DOM types are mapped to JSValue
         "HTMLElement" | "Element" | "Document" | "Window" | 
@@ -52,11 +61,29 @@ pub fn is_supported_type(typ : Type) -> Bool {
         
         // mbt.* prefixed types are supported
         _ => {
-          if name.length() > 4 && name.substring(0, 4) == "mbt." {
-            type_args.all(fn(t) { is_supported_type(t) })
+          if name.length() > 4 && name.substring(start=0, end=4) == "mbt." {
+            {
+              let mut all_supported = true
+              for t in type_args {
+                if not(is_supported_type(t)) {
+                  all_supported = false
+                  break
+                }
+              }
+              all_supported
+            }
           } else {
             // Other type references are allowed if their type arguments are supported
-            type_args.all(fn(t) { is_supported_type(t) })
+            {
+              let mut all_supported = true
+              for t in type_args {
+                if not(is_supported_type(t)) {
+                  all_supported = false
+                  break
+                }
+              }
+              all_supported
+            }
           }
         }
       }
@@ -64,7 +91,16 @@ pub fn is_supported_type(typ : Type) -> Bool {
     
     // Function types are supported if all parameter and return types are supported
     Function(func_type) => {
-      func_type.params.all(fn(p) { is_supported_type(p.type_) }) &&
+      {
+        let mut all_params_supported = true
+        for p in func_type.params {
+          if not(is_supported_type(p.type_)) {
+            all_params_supported = false
+            break
+          }
+        }
+        all_params_supported
+      } &&
       is_supported_type(func_type.return_type)
     }
     
@@ -80,18 +116,34 @@ pub fn is_supported_type(typ : Type) -> Bool {
     }
     
     // Tuple types are supported if all element types are supported
-    Tuple(types) => types.all(fn(t) { is_supported_type(t) })
+    Tuple(types) => {
+      let mut all_supported = true
+      for t in types {
+        if not(is_supported_type(t)) {
+          all_supported = false
+          break
+        }
+      }
+      all_supported
+    }
     
     // Union and Intersection types have limited support
     Union(types) => {
       // Union types are only supported if they can be simplified
       // For now, we only support unions with null/undefined
-      types.all(fn(t) { 
-        match t {
-          Null | Undefined => true
-          _ => false
+      {
+        let mut all_null_undefined = true
+        for t in types {
+          match t {
+            Null | Undefined => continue
+            _ => {
+              all_null_undefined = false
+              break
+            }
+          }
         }
-      }) || types.length() == 1
+        all_null_undefined || types.length() == 1
+      }
     }
     
     Intersection(_) => false  // Not supported
@@ -106,7 +158,7 @@ pub fn is_supported_type(typ : Type) -> Bool {
 }
 
 // Check if a declaration is supported
-pub fn is_supported_declaration(decl : Declaration) -> Bool {
+fn is_supported_declaration(decl : Declaration) -> Bool {
   match decl {
     // Supported declarations
     Interface(_) | TypeAlias(_) | Function(_) | Variable(_) | 
@@ -121,7 +173,7 @@ pub fn is_supported_declaration(decl : Declaration) -> Bool {
 }
 
 // Validate a type and collect errors/warnings
-pub fn validate_type(typ : Type, result : ValidationResult) -> Unit {
+fn validate_type(typ : Type, result : ValidationResult) -> Unit {
   match typ {
     // Warn about Any and Unknown usage
     Any => result.add_warning("'any' type loses type safety")
@@ -171,12 +223,16 @@ pub fn validate_type(typ : Type, result : ValidationResult) -> Unit {
     
     Union(types) => {
       // Check if union can be handled
-      let has_non_nullable = types.any(fn(t) {
+      let mut has_non_nullable = false
+      for t in types {
         match t {
-          Null | Undefined => false
-          _ => true
+          Null | Undefined => continue
+          _ => {
+            has_non_nullable = true
+            break
+          }
         }
-      })
+      }
       
       if has_non_nullable && types.length() > 1 {
         result.add_error("Complex union types are not supported (only nullable unions)")
@@ -198,7 +254,7 @@ pub fn validate_type(typ : Type, result : ValidationResult) -> Unit {
 }
 
 // Validate an interface declaration
-pub fn validate_interface(iface : InterfaceDeclaration, result : ValidationResult) -> Unit {
+fn validate_interface(iface : InterfaceDeclaration, result : ValidationResult) -> Unit {
   // Check for generic constraints
   if iface.type_params.length() > 0 {
     result.add_warning("Generic type parameters have limited support")
@@ -233,7 +289,7 @@ pub fn validate_interface(iface : InterfaceDeclaration, result : ValidationResul
 }
 
 // Validate a class declaration
-pub fn validate_class(cls : ClassDeclaration, result : ValidationResult) -> Unit {
+fn validate_class(cls : ClassDeclaration, result : ValidationResult) -> Unit {
   // Check for abstract classes
   if cls.declare {
     result.add_warning("Declare classes are treated as regular classes")
@@ -278,7 +334,7 @@ pub fn validate_class(cls : ClassDeclaration, result : ValidationResult) -> Unit
 }
 
 // Validate a function declaration
-pub fn validate_function(func : FunctionDeclaration, result : ValidationResult) -> Unit {
+fn validate_function(func : FunctionDeclaration, result : ValidationResult) -> Unit {
   // Validate parameter types
   func.params.each(fn(p) { 
     validate_type(p.type_, result)
@@ -297,7 +353,7 @@ pub fn validate_function(func : FunctionDeclaration, result : ValidationResult) 
 }
 
 // Validate a complete declaration
-pub fn validate_declaration(decl : Declaration, result : ValidationResult) -> Unit {
+fn validate_declaration(decl : Declaration, result : ValidationResult) -> Unit {
   match decl {
     Interface(iface) => validate_interface(iface, result)
     
@@ -336,14 +392,8 @@ pub fn validate_declaration(decl : Declaration, result : ValidationResult) -> Un
     Enum(enum_decl) => {
       enum_decl.members.each(fn(mbr) {
         match mbr.value {
-          Some(Literal(lit)) => {
-            match lit {
-              String(_) | Number(_) => ()
-              Boolean(_) => result.add_error("Boolean enum values are not supported")
-            }
-          }
-          Some(_) => result.add_error("Complex enum values are not supported")
-          None => ()
+          Some(_) => () // String values are supported
+          None => () // Implicit values are supported
         }
       })
     }
@@ -364,7 +414,7 @@ pub fn validate_declaration(decl : Declaration, result : ValidationResult) -> Un
 }
 
 // Main validation function for a DTS file
-pub fn validate_dts_file(file : DtsFile) -> ValidationResult {
+fn validate_dts_file(file : DtsFile) -> ValidationResult {
   let result = ValidationResult::new()
   
   // Validate all declarations
@@ -397,7 +447,7 @@ pub enum Feature {
 } derive(Show, Eq)
 
 // Check if a feature is supported
-pub fn is_feature_supported(feature : Feature) -> Bool {
+fn is_feature_supported(feature : Feature) -> Bool {
   match feature {
     // Supported features
     Generics => true          // Basic generics are supported
@@ -425,7 +475,7 @@ pub fn is_feature_supported(feature : Feature) -> Bool {
 }
 
 // Get feature support message
-pub fn get_feature_support_message(feature : Feature) -> String {
+fn get_feature_support_message(feature : Feature) -> String {
   match feature {
     Generics => "Basic generics are supported"
     Unions => "Only nullable unions (T | null | undefined) are supported"

@@ -1,10 +1,11 @@
 // TypeScript subset validator tests - シンプルな実装から開始
 
+///|
 test "parse and validate primitive types" {
   let input = "declare const x: string; declare const y: number; declare const z: boolean;"
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
-  
+
   // stringをパース
   let decl1 = parser.parse_declaration()
   match decl1 {
@@ -19,11 +20,11 @@ test "parse and validate primitive types" {
   }
 }
 
+///|
 test "parse array type" {
   let input = "declare const arr: string[];"
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
-  
   let result = parser.parse_declaration()
   match result {
     Some(Variable(v)) => {
@@ -37,19 +38,17 @@ test "parse array type" {
   }
 }
 
+///|
 test "parse promise type" {
   let input = "declare function fetchData(): Promise<string>;"
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
-  
   let result = parser.parse_declaration()
   match result {
     Some(Function(f)) => {
       inspect(f.name, content="fetchData")
       match f.return_type {
-        TypeReference(name, _) => {
-          inspect(name, content="Promise")
-        }
+        TypeReference(name, _) => inspect(name, content="Promise")
         _ => inspect(false, content="true")
       }
     }
@@ -57,19 +56,17 @@ test "parse promise type" {
   }
 }
 
+///|
 test "parse union type" {
   let input = "declare const nullable: string | null;"
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
-  
   let result = parser.parse_declaration()
   match result {
     Some(Variable(v)) => {
       inspect(v.name, content="nullable")
       match v.type_ {
-        Union(types) => {
-          inspect(types.length(), content="2")
-        }
+        Union(types) => inspect(types.length(), content="2")
         _ => inspect(false, content="true")
       }
     }
@@ -77,11 +74,11 @@ test "parse union type" {
   }
 }
 
+///|
 test "parse interface declaration" {
   let input = "interface Point { x: number; y: number; }"
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
-  
   let result = parser.parse_declaration()
   match result {
     Some(Interface(iface)) => {
@@ -92,19 +89,17 @@ test "parse interface declaration" {
   }
 }
 
+///|
 test "parse type alias" {
   let input = "type StringOrNumber = string | number;"
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
-  
   let result = parser.parse_declaration()
   match result {
-    Some(TypeAlias(alias)) => {
-      inspect(alias.name, content="StringOrNumber")
-      match alias.type_ {
-        Union(types) => {
-          inspect(types.length(), content="2")
-        }
+    Some(TypeAlias(alias_)) => {
+      inspect(alias_.name, content="StringOrNumber")
+      match alias_.type_ {
+        Union(types) => inspect(types.length(), content="2")
         _ => inspect(false, content="true")
       }
     }
@@ -112,11 +107,11 @@ test "parse type alias" {
   }
 }
 
+///|
 test "parse class declaration" {
   let input = "class User { name: string; age: number; }"
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
-  
   let result = parser.parse_declaration()
   match result {
     Some(Class(cls)) => {
@@ -127,11 +122,11 @@ test "parse class declaration" {
   }
 }
 
+///|
 test "parse optional parameters" {
   let input = "function greet(name: string, title?: string): void {}"
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
-  
   let result = parser.parse_declaration()
   match result {
     Some(Function(func)) => {
@@ -142,11 +137,11 @@ test "parse optional parameters" {
   }
 }
 
+///|
 test "parse rest parameters" {
   let input = "function sum(...numbers: number[]): number {}"
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
-  
   let result = parser.parse_declaration()
   match result {
     Some(Function(func)) => {
@@ -160,57 +155,50 @@ test "parse rest parameters" {
   }
 }
 
+///|
 test "parse tuple type" {
   let input = "declare const tuple: [string, number];"
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
-  
   let result = parser.parse_declaration()
   match result {
-    Some(Variable(v)) => {
+    Some(Variable(v)) =>
       match v.type_ {
-        Tuple(types) => {
-          inspect(types.length(), content="2")
-        }
+        Tuple(types) => inspect(types.length(), content="2")
         _ => inspect(false, content="true")
       }
-    }
     _ => inspect(false, content="true")
   }
 }
 
+///|
 test "parse literal types" {
   let input = "declare const literal: \"hello\";"
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
-  
   let result = parser.parse_declaration()
   match result {
-    Some(Variable(v)) => {
+    Some(Variable(v)) =>
       match v.type_ {
         Literal(_) => inspect(true, content="true")
         _ => inspect(false, content="true")
       }
-    }
     _ => inspect(false, content="true")
   }
 }
 
+///|
 test "parse readonly modifier" {
   let input = "interface Config { readonly apiKey: string; }"
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
-  
   let result = parser.parse_declaration()
   match result {
-    Some(Interface(iface)) => {
+    Some(Interface(iface)) =>
       match iface.members[0] {
-        Property(prop) => {
-          inspect(prop.readonly_, content="true")
-        }
+        Property(prop) => inspect(prop.readonly_, content="true")
         _ => inspect(false, content="true")
       }
-    }
     _ => inspect(false, content="true")
   }
 }

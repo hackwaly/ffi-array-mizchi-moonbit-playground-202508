@@ -3,7 +3,7 @@ test "parser parses empty object type" {
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
   
-  match parser.parse_type() {
+  match parser.parse_expr() {
     Some(Object(props)) => {
       assert_eq(props.size(), 0)
     }
@@ -16,11 +16,11 @@ test "parser parses object type with single property" {
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
   
-  match parser.parse_type() {
+  match parser.parse_expr() {
     Some(Object(props)) => {
       assert_eq(props.size(), 1)
       match props.get("name") {
-        Some(Type::String) => assert_true(true)
+        Some(@typescript_parser.Type::String) => assert_true(true)
         _ => assert_true(false)
       }
     }
@@ -33,15 +33,15 @@ test "parser parses object type with multiple properties" {
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
   
-  match parser.parse_type() {
+  match parser.parse_expr() {
     Some(Object(props)) => {
       assert_eq(props.size(), 2)
       match props.get("name") {
-        Some(Type::String) => assert_true(true)
+        Some(@typescript_parser.Type::String) => assert_true(true)
         _ => assert_true(false)
       }
       match props.get("age") {
-        Some(Type::Number) => assert_true(true)
+        Some(@typescript_parser.Type::Number) => assert_true(true)
         _ => assert_true(false)
       }
     }
@@ -54,18 +54,18 @@ test "parser parses nested object type" {
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
   
-  match parser.parse_type() {
+  match parser.parse_expr() {
     Some(Object(props)) => {
       assert_eq(props.size(), 1)
       match props.get("user") {
         Some(Object(user_props)) => {
           assert_eq(user_props.size(), 2)
           match user_props.get("name") {
-            Some(Type::String) => assert_true(true)
+            Some(@typescript_parser.Type::String) => assert_true(true)
             _ => assert_true(false)
           }
           match user_props.get("age") {
-            Some(Type::Number) => assert_true(true)
+            Some(@typescript_parser.Type::Number) => assert_true(true)
             _ => assert_true(false)
           }
         }
@@ -81,13 +81,13 @@ test "parser parses object with array property" {
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
   
-  match parser.parse_type() {
+  match parser.parse_expr() {
     Some(Object(props)) => {
       assert_eq(props.size(), 1)
       match props.get("items") {
         Some(Array(elem_type)) => {
           match elem_type {
-            Type::String => assert_true(true)
+            @typescript_parser.Type::String => assert_true(true)
             _ => assert_true(false)
           }
         }
@@ -113,7 +113,7 @@ test "parser parses JSON-like interface" {
         Property(prop) => {
           assert_eq(prop.name, "id")
           match prop.type_ {
-            Type::Number => assert_true(true)
+            @typescript_parser.Type::Number => assert_true(true)
             _ => assert_true(false)
           }
         }
@@ -127,7 +127,7 @@ test "parser parses JSON-like interface" {
           match prop.type_ {
             Array(elem_type) => {
               match elem_type {
-                Type::String => assert_true(true)
+                @typescript_parser.Type::String => assert_true(true)
                 _ => assert_true(false)
               }
             }
@@ -145,7 +145,7 @@ test "parser parses JSON-like interface" {
             Object(props) => {
               assert_eq(props.size(), 1)
               match props.get("theme") {
-                Some(Type::String) => assert_true(true)
+                Some(@typescript_parser.Type::String) => assert_true(true)
                 _ => assert_true(false)
               }
             }

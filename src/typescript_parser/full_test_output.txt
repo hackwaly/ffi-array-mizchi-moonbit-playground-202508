@@ -1,9 +1,0 @@
-test message from WasmGC
-test mizchi/esmbt/typesrcipt_parser/export_type_test.mbt::parse type alias with union of objects failed
-expect test failed at /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/export_type_test.mbt:52:3-52:46
-Diff:
-----
-10
-----
-
-Total tests: 131, passed: 130, failed: 1.

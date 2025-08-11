@@ -1,9 +1,10 @@
+///|
 pub enum Token {
   // Literals and identifiers
   Identifier(String)
-  StringLiteral(String)  // 文字列リテラル
-  NumberLiteral(String)  // 数値リテラル
-  
+  StringLiteral(String) // 文字列リテラル
+  NumberLiteral(String) // 数値リテラル
+
   // Keywords
   Interface
   Function
@@ -24,48 +25,51 @@ pub enum Token {
   Protected
   Static
   Readonly
-  Async     // async キーワード
+  Async // async キーワード
   Implements // implements キーワード
-  From      // from キーワード
-  As        // as キーワード
-  Declare   // declare キーワード
-  Default   // default キーワード
-  
+  From // from キーワード
+  As // as キーワード
+  Declare // declare キーワード
+  Default // default キーワード
+
   // Symbols
-  LeftBrace     // {
-  RightBrace    // }
-  LeftParen     // (
-  RightParen    // )
-  LeftBracket   // [
-  RightBracket  // ]
-  Semicolon     // ;
-  Colon         // :
-  Comma         // ,
-  Dot           // .
-  Arrow         // =>
-  Equals        // =
-  Question      // ?
-  Pipe          // |
-  Ampersand     // &
-  LessThan      // <
-  GreaterThan   // >
-  Star          // *
-  DotDotDot     // ...
-  
+  LeftBrace // {
+  RightBrace // }
+  LeftParen // (
+  RightParen // )
+  LeftBracket // [
+  RightBracket // ]
+  Semicolon // ;
+  Colon // :
+  Comma // ,
+  Dot // .
+  Arrow // =>
+  Equals // =
+  Question // ?
+  Pipe // |
+  Ampersand // &
+  LessThan // <
+  GreaterThan // >
+  Star // *
+  DotDotDot // ...
+
   // Special
   Eof
 } derive(Eq, Show)
 
+///|
 pub struct Lexer {
   input : String
   mut position : Int
 }
 
+///|
 pub fn Lexer::new(input : String) -> Lexer {
   { input, position: 0 }
 }
 
-fn current_char(self : Lexer) -> Option[Char] {
+///|
+fn current_char(self : Lexer) -> Char? {
   if self.position >= self.input.length() {
     None
   } else {
@@ -73,16 +77,18 @@ fn current_char(self : Lexer) -> Option[Char] {
   }
 }
 
+///|
 fn advance(self : Lexer) -> Unit {
   if self.position < self.input.length() {
     self.position += 1
   }
 }
 
+///|
 fn skip_whitespace(self : Lexer) -> Unit {
   while true {
     match self.current_char() {
-      Some(ch) => {
+      Some(ch) =>
         if ch == ' ' || ch == '\t' || ch == '\r' || ch == '\n' {
           self.advance()
         } else if ch == '/' {
@@ -105,17 +111,17 @@ fn skip_whitespace(self : Lexer) -> Unit {
         } else {
           break
         }
-      }
       None => break
     }
   }
 }
 
+///|
 fn skip_line_comment(self : Lexer) -> Unit {
   // // をスキップ
   self.advance()
   self.advance()
-  
+
   // 改行まで読み飛ばす
   while true {
     match self.current_char() {
@@ -131,11 +137,12 @@ fn skip_line_comment(self : Lexer) -> Unit {
   }
 }
 
+///|
 fn skip_block_comment(self : Lexer) -> Unit {
   // /* をスキップ
   self.advance()
   self.advance()
-  
+
   // */ まで読み飛ばす
   while true {
     match self.current_char() {
@@ -158,31 +165,30 @@ fn skip_block_comment(self : Lexer) -> Unit {
   }
 }
 
+///|
 fn read_identifier(self : Lexer) -> String {
   let start = self.position
-  
   while true {
     match self.current_char() {
-      Some(ch) => {
+      Some(ch) =>
         if is_letter(ch) || is_digit(ch) || ch == '_' || ch == '$' {
           self.advance()
         } else {
           break
         }
-      }
       None => break
     }
   }
-  self.input.substring(start=start, end=self.position)
+  self.input.substring(start~, end=self.position)
 }
 
+///|
 fn read_string(self : Lexer, quote : Char) -> String {
   let start = self.position
   self.advance() // Skip opening quote
-  
   while true {
     match self.current_char() {
-      Some(ch) => {
+      Some(ch) =>
         if ch == quote {
           let result = self.input.substring(start=start + 1, end=self.position)
           self.advance() // Skip closing quote
@@ -196,20 +202,19 @@ fn read_string(self : Lexer, quote : Char) -> String {
         } else {
           self.advance()
         }
-      }
       None => break
     }
   }
   self.input.substring(start=start + 1, end=self.position)
 }
 
+///|
 fn read_template_literal(self : Lexer) -> String {
   let start = self.position
   self.advance() // Skip opening backtick
-  
   while true {
     match self.current_char() {
-      Some(ch) => {
+      Some(ch) =>
         if ch == '`' {
           let result = self.input.substring(start=start + 1, end=self.position)
           self.advance() // Skip closing backtick
@@ -237,18 +242,17 @@ fn read_template_literal(self : Lexer) -> String {
         } else {
           self.advance()
         }
-      }
       None => break
     }
   }
   self.input.substring(start=start + 1, end=self.position)
 }
 
+///|
 fn skip_template_expression(self : Lexer) -> Unit {
   // ${ をスキップ
   self.advance()
   self.advance()
-  
   let mut brace_count = 1
   while brace_count > 0 {
     match self.current_char() {
@@ -271,23 +275,18 @@ fn skip_template_expression(self : Lexer) -> Unit {
   }
 }
 
+///|
 fn read_number(self : Lexer) -> String {
   let start = self.position
-  
+
   // 整数部分
   while true {
     match self.current_char() {
-      Some(ch) => {
-        if is_digit(ch) {
-          self.advance()
-        } else {
-          break
-        }
-      }
+      Some(ch) => if is_digit(ch) { self.advance() } else { break }
       None => break
     }
   }
-  
+
   // 小数点と小数部分
   match self.current_char() {
     Some('.') => {
@@ -298,13 +297,7 @@ fn read_number(self : Lexer) -> String {
           self.advance() // Skip '.'
           while true {
             match self.current_char() {
-              Some(ch) => {
-                if is_digit(ch) {
-                  self.advance()
-                } else {
-                  break
-                }
-              }
+              Some(ch) => if is_digit(ch) { self.advance() } else { break }
               None => break
             }
           }
@@ -313,7 +306,7 @@ fn read_number(self : Lexer) -> String {
     }
     _ => ()
   }
-  
+
   // 指数部分
   match self.current_char() {
     Some(ch) if ch == 'e' || ch == 'E' => {
@@ -324,32 +317,28 @@ fn read_number(self : Lexer) -> String {
       }
       while true {
         match self.current_char() {
-          Some(ch) => {
-            if is_digit(ch) {
-              self.advance()
-            } else {
-              break
-            }
-          }
+          Some(ch) => if is_digit(ch) { self.advance() } else { break }
           None => break
         }
       }
     }
     _ => ()
   }
-  
-  self.input.substring(start=start, end=self.position)
+  self.input.substring(start~, end=self.position)
 }
 
+///|
 fn is_letter(ch : Char) -> Bool {
-  (ch.to_int() >= 'a'.to_int() && ch.to_int() <= 'z'.to_int()) || 
+  (ch.to_int() >= 'a'.to_int() && ch.to_int() <= 'z'.to_int()) ||
   (ch.to_int() >= 'A'.to_int() && ch.to_int() <= 'Z'.to_int())
 }
 
+///|
 fn is_digit(ch : Char) -> Bool {
   ch.to_int() >= '0'.to_int() && ch.to_int() <= '9'.to_int()
 }
 
+///|
 fn lookup_keyword(ident : String) -> Token {
   match ident {
     "interface" => Token::Interface
@@ -381,12 +370,12 @@ fn lookup_keyword(ident : String) -> Token {
   }
 }
 
+///|
 pub fn Lexer::next_token(self : Lexer) -> Token {
   self.skip_whitespace()
-  
   match self.current_char() {
     None => Token::Eof
-    Some(ch) => {
+    Some(ch) =>
       if is_letter(ch) || ch == '_' || ch == '$' {
         let ident = self.read_identifier()
         lookup_keyword(ident)
@@ -412,15 +401,15 @@ pub fn Lexer::next_token(self : Lexer) -> Token {
           ',' => Token::Comma
           '.' => {
             // Check for DotDotDot (...)
-            let next1 = if self.position + 1 < self.input.length() { 
-              Some(Int::unsafe_to_char(self.input[self.position + 1])) 
-            } else { 
-              None 
+            let next1 = if self.position + 1 < self.input.length() {
+              Some(Int::unsafe_to_char(self.input[self.position + 1]))
+            } else {
+              None
             }
-            let next2 = if self.position + 2 < self.input.length() { 
-              Some(Int::unsafe_to_char(self.input[self.position + 2])) 
-            } else { 
-              None 
+            let next2 = if self.position + 2 < self.input.length() {
+              Some(Int::unsafe_to_char(self.input[self.position + 2]))
+            } else {
+              None
             }
             match (next1, next2) {
               (Some('.'), Some('.')) => {
@@ -456,6 +445,85 @@ pub fn Lexer::next_token(self : Lexer) -> Token {
         self.advance()
         token
       }
-    }
+  }
+}
+
+///|
+test "lexer tokenizes single identifier" {
+  let input = "hello"
+  let lexer = Lexer::new(input)
+  match lexer.next_token() {
+    Identifier(name) => assert_eq(name, "hello")
+    _ => assert_true(false)
+  }
+  match lexer.next_token() {
+    Eof => assert_true(true)
+    _ => assert_true(false)
+  }
+}
+
+///|
+test "lexer tokenizes keywords" {
+  let input = "interface function const"
+  let lexer = Lexer::new(input)
+  match lexer.next_token() {
+    Interface => assert_true(true)
+    _ => assert_true(false)
+  }
+  match lexer.next_token() {
+    Function => assert_true(true)
+    _ => assert_true(false)
+  }
+  match lexer.next_token() {
+    Const => assert_true(true)
+    _ => assert_true(false)
+  }
+}
+
+///|
+test "lexer tokenizes symbols" {
+  let input = "{}():;"
+  let lexer = Lexer::new(input)
+  match lexer.next_token() {
+    LeftBrace => assert_true(true)
+    _ => assert_true(false)
+  }
+  match lexer.next_token() {
+    RightBrace => assert_true(true)
+    _ => assert_true(false)
+  }
+  match lexer.next_token() {
+    LeftParen => assert_true(true)
+    _ => assert_true(false)
+  }
+  match lexer.next_token() {
+    RightParen => assert_true(true)
+    _ => assert_true(false)
+  }
+  match lexer.next_token() {
+    Colon => assert_true(true)
+    _ => assert_true(false)
+  }
+  match lexer.next_token() {
+    Semicolon => assert_true(true)
+    _ => assert_true(false)
+  }
+}
+
+///|
+test "lexer tokenizes type annotations" {
+  let input = "name: string"
+  let lexer = Lexer::new(input)
+  match lexer.next_token() {
+    Identifier(name) => assert_eq(name, "name")
+    _ => assert_true(false)
+  }
+  match lexer.next_token() {
+    Colon => assert_true(true)
+    _ => assert_true(false)
+  }
+  match lexer.next_token() {
+    Identifier(name) => assert_eq(name, "string")
+    _ => assert_true(false)
   }
 }

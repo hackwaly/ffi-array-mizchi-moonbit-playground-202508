@@ -5,10 +5,10 @@ test "parse and generate interface FFI" {
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
   
-  let declarations = parser.parse_typescript_file()
+  let declarations = parser.parse()
   inspect(declarations.length(), content="1")
   
-  let ffi = generate_ffi_code(declarations)
+  let ffi = @typescript_parser.generate_ffi_code(declarations)
   
   // 生成されたコードに必要な要素が含まれているか確認
   inspect(ffi.contains("pub struct Point"), content="true")
@@ -22,12 +22,11 @@ test "parse and generate type alias FFI" {
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
   
-  let declarations = parser.parse_typescript_file()
-  let ffi = generate_ffi_code(declarations)
+  let declarations = parser.parse()
+  let ffi = @typescript_parser.generate_ffi_code(declarations)
   
-  // typealias が生成されているか確認
-  inspect(ffi.contains("pub typealias UserID"), content="true")
-  inspect(ffi.contains("Double"), content="true")
+  // typealias が生成されているか確認（新しい構文）
+  inspect(ffi.contains("pub typealias Double as UserID"), content="true")
 }
 
 test "parse and generate function FFI" {
@@ -35,8 +34,8 @@ test "parse and generate function FFI" {
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
   
-  let declarations = parser.parse_typescript_file()
-  let ffi = generate_ffi_code(declarations)
+  let declarations = parser.parse()
+  let ffi = @typescript_parser.generate_ffi_code(declarations)
   
   // 関数バインディングが生成されているか確認
   inspect(ffi.contains("extern \"js\" fn createUser"), content="true")
@@ -50,8 +49,28 @@ test "parse and generate class FFI" {
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
   
-  let declarations = parser.parse_typescript_file()
-  let ffi = generate_ffi_code(declarations)
+  let declarations = parser.parse()
+  println("Class test - declarations: \{declarations.length()}")
+  match declarations[0] {
+    Export(e) => match e.declaration {
+      Some(Class(cls)) => {
+        println("Class name: \{cls.name}")
+        println("Class members: \{cls.members.length()}")
+        for i, m in cls.members {
+          match m {
+            ClassProperty(p) => println("Property[\{i}]: \{p.name}")
+            ClassMethod(m) => println("Method[\{i}]: \{m.name}")
+            ClassConstructor(_) => println("Constructor[\{i}]")
+          }
+        }
+      }
+      _ => println("Not a class")
+    }
+    _ => println("Not an export")
+  }
+  let ffi = @typescript_parser.generate_ffi_code(declarations)
+  println("Generated class FFI:")
+  println(ffi)
   
   // クラスの構造体とアクセサが生成されているか確認
   inspect(ffi.contains("pub struct User"), content="true")
@@ -64,8 +83,9 @@ test "generate complex interface with methods" {
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
   
-  let declarations = parser.parse_typescript_file()
-  let ffi = generate_ffi_code(declarations)
+  let declarations = parser.parse()
+  
+  let ffi = @typescript_parser.generate_ffi_code(declarations)
   
   // インターフェースのメソッドが生成されているか確認
   inspect(ffi.contains("pub struct Calculator"), content="true")
@@ -78,8 +98,8 @@ test "generate Promise return type" {
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
   
-  let declarations = parser.parse_typescript_file()
-  let ffi = generate_ffi_code(declarations)
+  let declarations = parser.parse()
+  let ffi = @typescript_parser.generate_ffi_code(declarations)
   
   // Promise型が正しく変換されているか確認
   inspect(ffi.contains("extern \"js\" fn fetchData"), content="true")
@@ -91,8 +111,8 @@ test "generate optional parameters" {
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
   
-  let declarations = parser.parse_typescript_file()
-  let ffi = generate_ffi_code(declarations)
+  let declarations = parser.parse()
+  let ffi = @typescript_parser.generate_ffi_code(declarations)
   
   // オプショナルパラメータが生成されているか確認
   inspect(ffi.contains("extern \"js\" fn greet"), content="true")
@@ -104,8 +124,8 @@ test "generate array types" {
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
   
-  let declarations = parser.parse_typescript_file()
-  let ffi = generate_ffi_code(declarations)
+  let declarations = parser.parse()
+  let ffi = @typescript_parser.generate_ffi_code(declarations)
   
   // 配列型が正しく変換されているか確認
   inspect(ffi.contains("extern \"js\" fn processItems"), content="true")
@@ -118,8 +138,8 @@ test "generate union type as Any" {
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
   
-  let declarations = parser.parse_typescript_file()
-  let ffi = generate_ffi_code(declarations)
+  let declarations = parser.parse()
+  let ffi = @typescript_parser.generate_ffi_code(declarations)
   
   // Union型がAnyに変換されているか確認
   inspect(ffi.contains("extern \"js\" fn handle"), content="true")
@@ -131,10 +151,10 @@ test "parse multiple declarations" {
   let lexer = Lexer::new(input)
   let parser = Parser::new(lexer)
   
-  let declarations = parser.parse_typescript_file()
+  let declarations = parser.parse()
   inspect(declarations.length(), content="2")
   
-  let ffi = generate_ffi_code(declarations)
+  let ffi = @typescript_parser.generate_ffi_code(declarations)
   
   // 両方の宣言が生成されているか確認
   inspect(ffi.contains("pub struct A"), content="true")

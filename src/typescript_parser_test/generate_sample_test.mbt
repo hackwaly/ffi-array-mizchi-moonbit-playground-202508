@@ -41,13 +41,13 @@ test "generate FFI for comprehensive sample" {
   let parser = Parser::new(lexer)
   
   // Parse the TypeScript declarations
-  let declarations = parser.parse_typescript_file()
+  let declarations = parser.parse()
   
   println("=== Parsing Results ===")
   println("Parsed \{declarations.length()} declarations\n")
   
   // Generate FFI code
-  let ffi_code = generate_ffi_code(declarations)
+  let ffi_code = @typescript_parser.generate_ffi_code(declarations)
   
   println("=== Generated MoonBit FFI ===")
   println(ffi_code)
@@ -58,9 +58,9 @@ test "generate FFI for comprehensive sample" {
   inspect(ffi_code.contains("pub struct Product"), content="true")
   inspect(ffi_code.contains("pub struct Config"), content="true")
   
-  // 型エイリアス
-  inspect(ffi_code.contains("pub typealias UserID = Double"), content="true")
-  inspect(ffi_code.contains("pub typealias ProductID = Double"), content="true")
+  // 型エイリアス（新しい構文）
+  inspect(ffi_code.contains("pub typealias Double as UserID"), content="true")
+  inspect(ffi_code.contains("pub typealias Double as ProductID"), content="true")
   
   // 関数
   inspect(ffi_code.contains("extern \"js\" fn createUser"), content="true")
