@@ -37,8 +37,8 @@ fn main {
     "export function createConfig(apiUrl: string, timeout?: number): Config;"
   
   // Create lexer and parser
-  let lexer = @typesrcipt_parser.Lexer::new(sample_dts)
-  let parser = @typesrcipt_parser.Parser::new(lexer)
+  let lexer = @typescript_parser.Lexer::new(sample_dts)
+  let parser = @typescript_parser.Parser::new(lexer)
   
   // Parse the TypeScript declarations
   let declarations = parser.parse_typescript_file()
@@ -47,7 +47,7 @@ fn main {
   println("Parsed \{declarations.length()} declarations\n")
   
   // Generate FFI code
-  let ffi_code = @typesrcipt_parser.generate_ffi_code(declarations)
+  let ffi_code = @typescript_parser.generate_ffi_code(declarations)
   
   println("=== Generated MoonBit FFI ===")
   println(ffi_code)

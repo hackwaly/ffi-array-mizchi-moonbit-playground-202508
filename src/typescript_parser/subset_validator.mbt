@@ -3,10 +3,10 @@
 
 // Validation result
 pub struct ValidationResult {
-  is_valid : Bool
+  mut is_valid : Bool
   errors : Array[String]
   warnings : Array[String]
-} derive(Debug, Show)
+} derive(Show)
 
 // Create a new validation result
 pub fn ValidationResult::new() -> ValidationResult {
@@ -210,17 +210,17 @@ pub fn validate_interface(iface : InterfaceDeclaration, result : ValidationResul
   }
   
   // Validate members
-  iface.members.each(fn(member) {
-    match member {
+  iface.members.each(fn(mbr) {
+    match mbr {
       Property(prop) => {
         validate_type(prop.type_, result)
         if prop.readonly_ {
           result.add_warning("Readonly properties are mapped to regular properties")
         }
       }
-      Method(method) => {
-        method.params.each(fn(p) { validate_type(p.type_, result) })
-        validate_type(method.return_type, result)
+      Method(meth) => {
+        meth.params.each(fn(p) { validate_type(p.type_, result) })
+        validate_type(meth.return_type, result)
       }
       Constructor(_) => {
         result.add_error("Constructor signatures in interfaces are not supported")
@@ -245,8 +245,8 @@ pub fn validate_class(cls : ClassDeclaration, result : ValidationResult) -> Unit
   }
   
   // Validate members
-  cls.members.each(fn(member) {
-    match member {
+  cls.members.each(fn(mbr) {
+    match mbr {
       ClassProperty(prop) => {
         validate_type(prop.type_, result)
         
@@ -258,12 +258,12 @@ pub fn validate_class(cls : ClassDeclaration, result : ValidationResult) -> Unit
           _ => ()
         }
       }
-      ClassMethod(method) => {
-        method.params.each(fn(p) { validate_type(p.type_, result) })
-        validate_type(method.return_type, result)
+      ClassMethod(meth) => {
+        meth.params.each(fn(p) { validate_type(p.type_, result) })
+        validate_type(meth.return_type, result)
         
         // Check visibility
-        match method.visibility {
+        match meth.visibility {
           Private | Protected => {
             result.add_warning("Private/protected methods are mapped to public")
           }
@@ -301,18 +301,18 @@ pub fn validate_declaration(decl : Declaration, result : ValidationResult) -> Un
   match decl {
     Interface(iface) => validate_interface(iface, result)
     
-    TypeAlias(alias) => {
-      validate_type(alias.type_, result)
-      if alias.type_params.length() > 0 {
+    TypeAlias(ta) => {
+      validate_type(ta.type_, result)
+      if ta.type_params.length() > 0 {
         result.add_warning("Generic type aliases have limited support")
       }
     }
     
     Function(func) => validate_function(func, result)
     
-    Variable(var) => {
-      validate_type(var.type_, result)
-      if var.declare {
+    Variable(v) => {
+      validate_type(v.type_, result)
+      if v.declare {
         result.add_warning("Declare variables are treated as regular variables")
       }
     }
@@ -334,8 +334,8 @@ pub fn validate_declaration(decl : Declaration, result : ValidationResult) -> Un
     }
     
     Enum(enum_decl) => {
-      enum_decl.members.each(fn(member) {
-        match member.value {
+      enum_decl.members.each(fn(mbr) {
+        match mbr.value {
           Some(Literal(lit)) => {
             match lit {
               String(_) | Number(_) => ()
@@ -348,15 +348,15 @@ pub fn validate_declaration(decl : Declaration, result : ValidationResult) -> Un
       })
     }
     
-    Export(export) => {
-      match export.declaration {
+    Export(exp) => {
+      match exp.declaration {
         Some(d) => validate_declaration(d, result)
         None => ()
       }
     }
     
-    Import(import) => {
-      if import.is_type_only {
+    Import(imp) => {
+      if imp.is_type_only {
         result.add_warning("Type-only imports are treated as regular imports")
       }
     }
@@ -394,7 +394,7 @@ pub enum Feature {
   RestParameters
   OptionalChaining
   NullishCoalescing
-} derive(Debug, Show, Eq)
+} derive(Show, Eq)
 
 // Check if a feature is supported
 pub fn is_feature_supported(feature : Feature) -> Bool {

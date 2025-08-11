@@ -22,8 +22,8 @@ fn main {
     "export function updateUser(id: UserID, data: { name?: string; email?: string }): User;"
   
   // Create lexer and parser
-  let lexer = @typesrcipt_parser.Lexer::new(sample_dts)
-  let parser = @typesrcipt_parser.Parser::new(lexer)
+  let lexer = @typescript_parser.Lexer::new(sample_dts)
+  let parser = @typescript_parser.Parser::new(lexer)
   
   // Parse the TypeScript declarations
   let declarations = parser.parse_typescript_file()
@@ -35,22 +35,22 @@ fn main {
   for i = 0, len = declarations.length(); i < len; i = i + 1 {
     let decl = declarations[i]
     match decl {
-      @typesrcipt_parser.Export(exp) => {
+      @typescript_parser.Export(exp) => {
         match exp.declaration {
-          Some(@typesrcipt_parser.Interface(iface)) => 
+          Some(@typescript_parser.Interface(iface)) => 
             println("  [\{i}] Export Interface: \{iface.name}")
-          Some(@typesrcipt_parser.TypeAlias(ta)) => 
+          Some(@typescript_parser.TypeAlias(ta)) => 
             println("  [\{i}] Export Type Alias: \{ta.name}")
-          Some(@typesrcipt_parser.Function(func)) => 
+          Some(@typescript_parser.Function(func)) => 
             println("  [\{i}] Export Function: \{func.name}")
           _ => println("  [\{i}] Export (other)")
         }
       }
-      @typesrcipt_parser.Interface(iface) => 
+      @typescript_parser.Interface(iface) => 
         println("  [\{i}] Interface: \{iface.name}")
-      @typesrcipt_parser.TypeAlias(ta) => 
+      @typescript_parser.TypeAlias(ta) => 
         println("  [\{i}] Type Alias: \{ta.name}")
-      @typesrcipt_parser.Function(func) => 
+      @typescript_parser.Function(func) => 
         println("  [\{i}] Function: \{func.name}")
       _ => println("  [\{i}] Other declaration")
     }
@@ -58,7 +58,7 @@ fn main {
   
   // Generate FFI code
   println("\n=== Generating FFI Code ===")
-  let ffi_code = @typesrcipt_parser.generate_ffi_code(declarations)
+  let ffi_code = @typescript_parser.generate_ffi_code(declarations)
   
   println("\n=== Generated MoonBit FFI ===")
   println(ffi_code)
