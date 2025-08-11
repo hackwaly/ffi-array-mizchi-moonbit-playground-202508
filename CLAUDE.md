@@ -96,3 +96,143 @@ Memories contain important project context, conventions, and guidelines that hel
 
 The context and modes of operation are described below. From them you can infer how to interact with your user
 and which tasks and kinds of interactions are expected of you.
+
+---
+
+## MoonBit 構文エラーパターンと修正方法
+
+### 1. Result型のエラーハンドリング
+
+**エラー例:**
+```moonbit
+fn parse_something(self : Parser) -> Result[String, ParseError] {
+  let value = self.expect_identifier()  // ❌ Result型を直接使用
+  Ok(value)
+}
+```
+
+**修正方法:**
+
+```moonbit
+// パターン1: match式で明示的に処理
+fn parse_something(self : Parser) -> Result[String, ParseError] {
+  let value = match self.expect_identifier() {
+    Ok(v) => v
+    Err(e) => return Err(e)
+  }
+  Ok(value)
+}
+
+// パターン2: try? 演算子を使用 (関数シグネチャに ! が必要)
+fn parse_something(self : Parser) -> Result[String, ParseError]! {
+  let value = try? self.expect_identifier()
+  Ok(value)
+}
+
+// パターン3: ? 演算子を使用
+fn parse_something(self : Parser) -> Result[String, ParseError] {
+  let value = self.expect_identifier()?
+  Ok(value)
+}
+```
+
+### 2. mutableフィールドの宣言
+
+**エラー例:**
+```moonbit
+struct Parser {
+  tokens : Array[Token]
+  position : Int        // ❌ 変更される場合はmutが必要
+  current_token : Token // ❌ 変更される場合はmutが必要
+}
+```
+
+**修正方法:**
+```moonbit
+struct Parser {
+  tokens : Array[Token]
+  mut position : Int        // ✅ mutキーワードを追加
+  mut current_token : Token // ✅ mutキーワードを追加
+}
+```
+
+### 3. 関数呼び出しの括弧
+
+**エラー例:**
+```moonbit
+let result = self.parse_type  // ❌ 関数呼び出しには括弧が必要
+```
+
+**修正方法:**
+```moonbit
+let result = self.parse_type() // ✅ 括弧を追加
+```
+
+### 4. Option型の処理
+
+**エラー例:**
+```moonbit
+let ok_type = Some(self.parse_type()) // ❌ Result型をOptionに直接入れる
+```
+
+**修正方法:**
+```moonbit
+let ok_type = match self.parse_type() {
+  Ok(v) => Some(v)
+  Err(e) => return Err(e)
+}
+
+// または try? を使用
+let ok_type = Some(try? self.parse_type())
+```
+
+### 5. 予約語の警告
+
+MoonBitには将来使用される可能性がある予約語があります：
+- `namespace`
+- `package`
+- `method`
+- `export`
+- `import`
+- `alias`
+
+これらは変数名として使用すると警告が出ます。
+
+### 6. Resultの返り値を無視できない
+
+**エラー例:**
+```moonbit
+self.expect(Token::Semicolon) // ❌ Result型の値を無視
+```
+
+**修正方法:**
+```moonbit
+// パターン1: 明示的に処理
+match self.expect(Token::Semicolon) {
+  Ok(_) => ()
+  Err(e) => return Err(e)
+}
+
+// パターン2: ? 演算子を使用
+self.expect(Token::Semicolon)?
+
+// パターン3: 無視する場合
+ignore(self.expect(Token::Semicolon))
+```
+
+### 7. 改行での関数呼び出し
+
+**エラー例:**
+```moonbit
+let result = self.parse_function_signature
+  ()  // ❌ 改行後の括弧
+```
+
+**修正方法:**
+```moonbit
+let result = self.parse_function_signature() // ✅ 同じ行に括弧
+```
+
+---
+
+## Moonbit Cheatsheet
