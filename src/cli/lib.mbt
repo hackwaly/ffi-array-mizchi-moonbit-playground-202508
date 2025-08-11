@@ -85,7 +85,7 @@ fn declaration_to_json(decl : @typescript_parser.Declaration) -> String {
       json.write_string(cls.name)
       json.write_string("\",\"typeParams\":")
       json.write_string(string_array_to_json(cls.type_params))
-      if cls.extends.is_some() {
+      if cls.extends is Some(_) {
         json.write_string(",\"extends\":\"")
         json.write_string(cls.extends.unwrap())
         json.write_string("\"")

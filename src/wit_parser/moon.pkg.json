@@ -1,14 +1,5 @@
 {
   "name": "wit_parser",
   "is-main": false,
-  "import": [
-    "moonbitlang/core/array",
-    "moonbitlang/core/char",
-    "moonbitlang/core/map",
-    "moonbitlang/core/string",
-    "moonbitlang/core/iter",
-    "moonbitlang/core/option",
-    "moonbitlang/core/result",
-    "moonbitlang/core/builtin"
-  ]
+  "import": []
 }
