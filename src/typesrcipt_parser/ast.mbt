@@ -46,6 +46,7 @@ pub enum Declaration {
   Class(ClassDeclaration)
   Module(ModuleDeclaration)
   Namespace(NamespaceDeclaration)
+  Enum(EnumDeclaration)
   Export(ExportDeclaration)
   Import(ImportDeclaration)
 }
@@ -170,6 +171,17 @@ pub struct NamespaceDeclaration {
   declare : Bool
 }
 
+pub struct EnumDeclaration {
+  name : String
+  is_const : Bool
+  members : Array[EnumMember]
+}
+
+pub struct EnumMember {
+  name : String
+  value : Option[String]
+}
+
 pub struct ExportDeclaration {
   declaration : Option[Declaration]
   named_exports : Array[ExportSpecifier]
@@ -184,6 +196,7 @@ pub struct ExportSpecifier {
 pub struct ImportDeclaration {
   specifiers : Array[ImportSpecifier]
   from : String
+  is_type_only : Bool
 }
 
 pub enum ImportSpecifier {

@@ -1,0 +1,16 @@
+test message from WasmGC
+test mizchi/esmbt/typesrcipt_parser/example_usage.mbt::simple export function with object types failed
+expect test failed at /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/example_usage.mbt:27:3-27:46
+Diff:
+----
+10
+----
+
+test mizchi/esmbt/typesrcipt_parser/export_type_test.mbt::parse export function with object parameters failed
+expect test failed at /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/export_type_test.mbt:30:3-30:46
+Diff:
+----
+10
+----
+
+Total tests: 131, passed: 129, failed: 2.

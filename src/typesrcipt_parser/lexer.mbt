@@ -28,6 +28,8 @@ pub enum Token {
   Implements // implements キーワード
   From      // from キーワード
   As        // as キーワード
+  Declare   // declare キーワード
+  Default   // default キーワード
   
   // Symbols
   LeftBrace     // {
@@ -48,6 +50,7 @@ pub enum Token {
   LessThan      // <
   GreaterThan   // >
   Star          // *
+  DotDotDot     // ...
   
   // Special
   Eof
@@ -372,6 +375,8 @@ fn lookup_keyword(ident : String) -> Token {
     "async" => Token::Async
     "from" => Token::From
     "as" => Token::As
+    "declare" => Token::Declare
+    "default" => Token::Default
     _ => Token::Identifier(ident)
   }
 }
@@ -405,7 +410,28 @@ pub fn Lexer::next_token(self : Lexer) -> Token {
           ';' => Token::Semicolon
           ':' => Token::Colon
           ',' => Token::Comma
-          '.' => Token::Dot
+          '.' => {
+            // Check for DotDotDot (...)
+            let next1 = if self.position + 1 < self.input.length() { 
+              Some(Int::unsafe_to_char(self.input[self.position + 1])) 
+            } else { 
+              None 
+            }
+            let next2 = if self.position + 2 < self.input.length() { 
+              Some(Int::unsafe_to_char(self.input[self.position + 2])) 
+            } else { 
+              None 
+            }
+            match (next1, next2) {
+              (Some('.'), Some('.')) => {
+                self.advance() // skip first .
+                self.advance() // skip second .
+                self.advance() // skip third .
+                return Token::DotDotDot
+              }
+              _ => Token::Dot
+            }
+          }
           '?' => Token::Question
           '|' => Token::Pipe
           '&' => Token::Ampersand

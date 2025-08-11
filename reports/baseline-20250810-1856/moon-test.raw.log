@@ -1,0 +1,625 @@
+Warning: [0006]
+    ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/ast.mbt:15:3 ]
+    │
+ 15 │   Intersection(Array[Type])
+    │   ──────┬─────  
+    │         ╰─────── Warning: Variant 'Intersection' is never constructed
+────╯
+Warning: [0006]
+    ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/ast.mbt:19:3 ]
+    │
+ 19 │   Optional(Type)
+    │   ────┬───  
+    │       ╰───── Warning: Variant 'Optional' is never constructed
+────╯
+Warning: [0006]
+    ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/ast.mbt:20:3 ]
+    │
+ 20 │   Readonly(Type)
+    │   ────┬───  
+    │       ╰───── Warning: Variant 'Readonly' is never constructed
+────╯
+Warning: [0006]
+    ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/ast.mbt:26:3 ]
+    │
+ 26 │   Boolean(Bool)
+    │   ───┬───  
+    │      ╰───── Warning: Variant 'Boolean' is never constructed
+────╯
+Warning: [0006]
+    ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/ast.mbt:45:3 ]
+    │
+ 45 │   Variable(VariableDeclaration)
+    │   ────┬───  
+    │       ╰───── Warning: Variant 'Variable' is never constructed
+────╯
+Warning: [0006]
+    ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/ast.mbt:47:3 ]
+    │
+ 47 │   Module(ModuleDeclaration)
+    │   ───┬──  
+    │      ╰──── Warning: Variant 'Module' is never constructed
+────╯
+Warning: [0006]
+    ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/ast.mbt:48:3 ]
+    │
+ 48 │   Namespace(NamespaceDeclaration)
+    │   ────┬────  
+    │       ╰────── Warning: Variant 'Namespace' is never constructed
+────╯
+Warning: [0006]
+    ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/ast.mbt:62:3 ]
+    │
+ 62 │   Method(MethodMember)
+    │   ───┬──  
+    │      ╰──── Warning: Variant 'Method' is never constructed
+────╯
+Warning: [0006]
+    ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/ast.mbt:63:3 ]
+    │
+ 63 │   Constructor(ConstructorMember)
+    │   ─────┬─────  
+    │        ╰─────── Warning: Variant 'Constructor' is never constructed
+────╯
+Warning: [0006]
+    ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/ast.mbt:64:3 ]
+    │
+ 64 │   IndexSignature(IndexSignatureMember)
+    │   ───────┬──────  
+    │          ╰──────── Warning: Variant 'IndexSignature' is never constructed
+────╯
+Warning: [0009]
+    ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/ast.mbt:74:12 ]
+    │
+ 74 │ pub struct MethodMember {
+    │            ──────┬─────  
+    │                  ╰─────── Warning: The struct MethodMember is never constructed
+────╯
+Warning: [0009]
+    ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/ast.mbt:81:12 ]
+    │
+ 81 │ pub struct ConstructorMember {
+    │            ────────┬────────  
+    │                    ╰────────── Warning: The struct ConstructorMember is never constructed
+────╯
+Warning: [0009]
+    ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/ast.mbt:85:12 ]
+    │
+ 85 │ pub struct IndexSignatureMember {
+    │            ──────────┬─────────  
+    │                      ╰─────────── Warning: The struct IndexSignatureMember is never constructed
+────╯
+Warning: [0009]
+     ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/ast.mbt:148:12 ]
+     │
+ 148 │ pub struct VariableDeclaration {
+     │            ─────────┬─────────  
+     │                     ╰─────────── Warning: The struct VariableDeclaration is never constructed
+─────╯
+Warning: [0006]
+     ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/ast.mbt:156:3 ]
+     │
+ 156 │   Const
+     │   ──┬──  
+     │     ╰──── Warning: Variant 'Const' is never constructed
+─────╯
+Warning: [0006]
+     ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/ast.mbt:157:3 ]
+     │
+ 157 │   Let
+     │   ─┬─  
+     │    ╰─── Warning: Variant 'Let' is never constructed
+─────╯
+Warning: [0006]
+     ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/ast.mbt:158:3 ]
+     │
+ 158 │   Var
+     │   ─┬─  
+     │    ╰─── Warning: Variant 'Var' is never constructed
+─────╯
+Warning: [0009]
+     ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/ast.mbt:161:12 ]
+     │
+ 161 │ pub struct ModuleDeclaration {
+     │            ────────┬────────  
+     │                    ╰────────── Warning: The struct ModuleDeclaration is never constructed
+─────╯
+Warning: [0009]
+     ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/ast.mbt:167:12 ]
+     │
+ 167 │ pub struct NamespaceDeclaration {
+     │            ──────────┬─────────  
+     │                      ╰─────────── Warning: The struct NamespaceDeclaration is never constructed
+─────╯
+Warning: [0009]
+     ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/ast.mbt:195:12 ]
+     │
+ 195 │ pub struct DtsFile {
+     │            ───┬───  
+     │               ╰───── Warning: The struct DtsFile is never constructed
+─────╯
+Warning: [0035]
+     ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/parser.mbt:956:38 ]
+     │
+ 956 │       self.parse_type_alias().map(fn(alias) { Declaration::TypeAlias(alias) })
+     │                                      ──┬──  
+     │                                        ╰──── Warning: The word `alias` is reserved for possible future use. Please consider using another name.
+─────╯
+Warning: [0035]
+     ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/parser.mbt:956:70 ]
+     │
+ 956 │       self.parse_type_alias().map(fn(alias) { Declaration::TypeAlias(alias) })
+     │                                                                      ──┬──  
+     │                                                                        ╰──── Warning: The word `alias` is reserved for possible future use. Please consider using another name.
+─────╯
+Warning: [0035]
+      ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/parser.mbt:1047:24 ]
+      │
+ 1047 │             Identifier(alias) => {
+      │                        ──┬──  
+      │                          ╰──── Warning: The word `alias` is reserved for possible future use. Please consider using another name.
+──────╯
+Warning: [0035]
+      ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/parser.mbt:1049:20 ]
+      │
+ 1049 │               Some(alias)
+      │                    ──┬──  
+      │                      ╰──── Warning: The word `alias` is reserved for possible future use. Please consider using another name.
+──────╯
+Warning: [0002]
+      ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/parser.mbt:1099:7 ]
+      │
+ 1099 │   let is_type_import = if self.current_token_is(Token::Type) {
+      │       ───────┬──────  
+      │              ╰──────── Warning: Unused variable 'is_type_import'
+──────╯
+Warning: [0035]
+      ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/parser.mbt:1176:24 ]
+      │
+ 1176 │             Identifier(alias) => {
+      │                        ──┬──  
+      │                          ╰──── Warning: The word `alias` is reserved for possible future use. Please consider using another name.
+──────╯
+Warning: [0035]
+      ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/parser.mbt:1178:20 ]
+      │
+ 1178 │               Some(alias)
+      │                    ──┬──  
+      │                      ╰──── Warning: The word `alias` is reserved for possible future use. Please consider using another name.
+──────╯
+Warning: [2000]
+    ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/cli/lib.mbt:85:22 ]
+    │
+ 85 │       if cls.extends.is_some() {
+    │                      ───┬───  
+    │                         ╰───── Warning (Alert deprecated): use `x is Some(_)` instead
+────╯
+Warning: [0035]
+     ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/cli/lib.mbt:157:10 ]
+     │
+ 157 │   for i, member in members {
+     │          ───┬──  
+     │             ╰──── Warning: The word `member` is reserved for possible future use. Please consider using another name.
+─────╯
+Warning: [0035]
+     ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/cli/lib.mbt:161:11 ]
+     │
+ 161 │     match member {
+     │           ───┬──  
+     │              ╰──── Warning: The word `member` is reserved for possible future use. Please consider using another name.
+─────╯
+Warning: [0035]
+     ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/cli/lib.mbt:184:10 ]
+     │
+ 184 │   for i, member in members {
+     │          ───┬──  
+     │             ╰──── Warning: The word `member` is reserved for possible future use. Please consider using another name.
+─────╯
+Warning: [0035]
+     ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/cli/lib.mbt:188:11 ]
+     │
+ 188 │     match member {
+     │           ───┬──  
+     │              ╰──── Warning: The word `member` is reserved for possible future use. Please consider using another name.
+─────╯
+Warning: [0035]
+     ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/cli/lib.mbt:200:19 ]
+     │
+ 200 │       ClassMethod(method) => {
+     │                   ───┬──  
+     │                      ╰──── Warning: The word `method` is reserved for possible future use. Please consider using another name.
+─────╯
+Warning: [0035]
+     ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/cli/lib.mbt:202:29 ]
+     │
+ 202 │         result.write_string(method.name)
+     │                             ───┬──  
+     │                                ╰──── Warning: The word `method` is reserved for possible future use. Please consider using another name.
+─────╯
+Warning: [0035]
+     ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/cli/lib.mbt:204:50 ]
+     │
+ 204 │         result.write_string(visibility_to_string(method.visibility))
+     │                                                  ───┬──  
+     │                                                     ╰──── Warning: The word `method` is reserved for possible future use. Please consider using another name.
+─────╯
+Warning: [0035]
+     ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/cli/lib.mbt:206:32 ]
+     │
+ 206 │         result.write_string(if method.is_static { "true" } else { "false" })
+     │                                ───┬──  
+     │                                   ╰──── Warning: The word `method` is reserved for possible future use. Please consider using another name.
+─────╯
+Warning: [0035]
+     ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/cli/lib.mbt:208:44 ]
+     │
+ 208 │         result.write_string(params_to_json(method.params))
+     │                                            ───┬──  
+     │                                               ╰──── Warning: The word `method` is reserved for possible future use. Please consider using another name.
+─────╯
+Warning: [0035]
+     ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/cli/lib.mbt:210:42 ]
+     │
+ 210 │         result.write_string(type_to_json(method.return_type))
+     │                                          ───┬──  
+     │                                             ╰──── Warning: The word `method` is reserved for possible future use. Please consider using another name.
+─────╯
+Warning: [0035]
+     ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/cli/lib.mbt:387:13 ]
+     │
+ 387 │       Named(local, imported) => {
+     │             ──┬──  
+     │               ╰──── Warning: The word `local` is reserved for possible future use. Please consider using another name.
+─────╯
+Warning: [0035]
+     ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/cli/lib.mbt:389:48 ]
+     │
+ 389 │         result.write_string(escape_json_string(local))
+     │                                                ──┬──  
+     │                                                  ╰──── Warning: The word `local` is reserved for possible future use. Please consider using another name.
+─────╯
+Warning: [0006]
+    ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/ast.mbt:15:3 ]
+    │
+ 15 │   Intersection(Array[Type])
+    │   ──────┬─────  
+    │         ╰─────── Warning: Variant 'Intersection' is never constructed
+────╯
+Warning: [0006]
+    ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/ast.mbt:19:3 ]
+    │
+ 19 │   Optional(Type)
+    │   ────┬───  
+    │       ╰───── Warning: Variant 'Optional' is never constructed
+────╯
+Warning: [0006]
+    ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/ast.mbt:20:3 ]
+    │
+ 20 │   Readonly(Type)
+    │   ────┬───  
+    │       ╰───── Warning: Variant 'Readonly' is never constructed
+────╯
+Warning: [0006]
+    ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/ast.mbt:26:3 ]
+    │
+ 26 │   Boolean(Bool)
+    │   ───┬───  
+    │      ╰───── Warning: Variant 'Boolean' is never constructed
+────╯
+Warning: [0006]
+    ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/ast.mbt:45:3 ]
+    │
+ 45 │   Variable(VariableDeclaration)
+    │   ────┬───  
+    │       ╰───── Warning: Variant 'Variable' is never constructed
+────╯
+Warning: [0006]
+    ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/ast.mbt:47:3 ]
+    │
+ 47 │   Module(ModuleDeclaration)
+    │   ───┬──  
+    │      ╰──── Warning: Variant 'Module' is never constructed
+────╯
+Warning: [0006]
+    ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/ast.mbt:48:3 ]
+    │
+ 48 │   Namespace(NamespaceDeclaration)
+    │   ────┬────  
+    │       ╰────── Warning: Variant 'Namespace' is never constructed
+────╯
+Warning: [0006]
+    ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/ast.mbt:62:3 ]
+    │
+ 62 │   Method(MethodMember)
+    │   ───┬──  
+    │      ╰──── Warning: Variant 'Method' is never constructed
+────╯
+Warning: [0006]
+    ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/ast.mbt:63:3 ]
+    │
+ 63 │   Constructor(ConstructorMember)
+    │   ─────┬─────  
+    │        ╰─────── Warning: Variant 'Constructor' is never constructed
+────╯
+Warning: [0006]
+    ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/ast.mbt:64:3 ]
+    │
+ 64 │   IndexSignature(IndexSignatureMember)
+    │   ───────┬──────  
+    │          ╰──────── Warning: Variant 'IndexSignature' is never constructed
+────╯
+Warning: [0009]
+    ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/ast.mbt:74:12 ]
+    │
+ 74 │ pub struct MethodMember {
+    │            ──────┬─────  
+    │                  ╰─────── Warning: The struct MethodMember is never constructed
+────╯
+Warning: [0009]
+    ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/ast.mbt:81:12 ]
+    │
+ 81 │ pub struct ConstructorMember {
+    │            ────────┬────────  
+    │                    ╰────────── Warning: The struct ConstructorMember is never constructed
+────╯
+Warning: [0009]
+    ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/ast.mbt:85:12 ]
+    │
+ 85 │ pub struct IndexSignatureMember {
+    │            ──────────┬─────────  
+    │                      ╰─────────── Warning: The struct IndexSignatureMember is never constructed
+────╯
+Warning: [0009]
+     ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/ast.mbt:148:12 ]
+     │
+ 148 │ pub struct VariableDeclaration {
+     │            ─────────┬─────────  
+     │                     ╰─────────── Warning: The struct VariableDeclaration is never constructed
+─────╯
+Warning: [0006]
+     ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/ast.mbt:156:3 ]
+     │
+ 156 │   Const
+     │   ──┬──  
+     │     ╰──── Warning: Variant 'Const' is never constructed
+─────╯
+Warning: [0006]
+     ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/ast.mbt:157:3 ]
+     │
+ 157 │   Let
+     │   ─┬─  
+     │    ╰─── Warning: Variant 'Let' is never constructed
+─────╯
+Warning: [0006]
+     ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/ast.mbt:158:3 ]
+     │
+ 158 │   Var
+     │   ─┬─  
+     │    ╰─── Warning: Variant 'Var' is never constructed
+─────╯
+Warning: [0009]
+     ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/ast.mbt:161:12 ]
+     │
+ 161 │ pub struct ModuleDeclaration {
+     │            ────────┬────────  
+     │                    ╰────────── Warning: The struct ModuleDeclaration is never constructed
+─────╯
+Warning: [0009]
+     ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/ast.mbt:167:12 ]
+     │
+ 167 │ pub struct NamespaceDeclaration {
+     │            ──────────┬─────────  
+     │                      ╰─────────── Warning: The struct NamespaceDeclaration is never constructed
+─────╯
+Warning: [0009]
+     ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/ast.mbt:195:12 ]
+     │
+ 195 │ pub struct DtsFile {
+     │            ───┬───  
+     │               ╰───── Warning: The struct DtsFile is never constructed
+─────╯
+Warning: [0035]
+     ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/parser.mbt:956:38 ]
+     │
+ 956 │       self.parse_type_alias().map(fn(alias) { Declaration::TypeAlias(alias) })
+     │                                      ──┬──  
+     │                                        ╰──── Warning: The word `alias` is reserved for possible future use. Please consider using another name.
+─────╯
+Warning: [0035]
+     ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/parser.mbt:956:70 ]
+     │
+ 956 │       self.parse_type_alias().map(fn(alias) { Declaration::TypeAlias(alias) })
+     │                                                                      ──┬──  
+     │                                                                        ╰──── Warning: The word `alias` is reserved for possible future use. Please consider using another name.
+─────╯
+Warning: [0035]
+      ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/parser.mbt:1047:24 ]
+      │
+ 1047 │             Identifier(alias) => {
+      │                        ──┬──  
+      │                          ╰──── Warning: The word `alias` is reserved for possible future use. Please consider using another name.
+──────╯
+Warning: [0035]
+      ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/parser.mbt:1049:20 ]
+      │
+ 1049 │               Some(alias)
+      │                    ──┬──  
+      │                      ╰──── Warning: The word `alias` is reserved for possible future use. Please consider using another name.
+──────╯
+Warning: [0002]
+      ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/parser.mbt:1099:7 ]
+      │
+ 1099 │   let is_type_import = if self.current_token_is(Token::Type) {
+      │       ───────┬──────  
+      │              ╰──────── Warning: Unused variable 'is_type_import'
+──────╯
+Warning: [0035]
+      ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/parser.mbt:1176:24 ]
+      │
+ 1176 │             Identifier(alias) => {
+      │                        ──┬──  
+      │                          ╰──── Warning: The word `alias` is reserved for possible future use. Please consider using another name.
+──────╯
+Warning: [0035]
+      ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/parser.mbt:1178:20 ]
+      │
+ 1178 │               Some(alias)
+      │                    ──┬──  
+      │                      ╰──── Warning: The word `alias` is reserved for possible future use. Please consider using another name.
+──────╯
+Warning: [0035]
+     ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/cli/lib.mbt:157:10 ]
+     │
+ 157 │   for i, member in members {
+     │          ───┬──  
+     │             ╰──── Warning: The word `member` is reserved for possible future use. Please consider using another name.
+─────╯
+Warning: [0035]
+     ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/cli/lib.mbt:161:11 ]
+     │
+ 161 │     match member {
+     │           ───┬──  
+     │              ╰──── Warning: The word `member` is reserved for possible future use. Please consider using another name.
+─────╯
+Warning: [0035]
+     ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/cli/lib.mbt:184:10 ]
+     │
+ 184 │   for i, member in members {
+     │          ───┬──  
+     │             ╰──── Warning: The word `member` is reserved for possible future use. Please consider using another name.
+─────╯
+Warning: [0035]
+     ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/cli/lib.mbt:188:11 ]
+     │
+ 188 │     match member {
+     │           ───┬──  
+     │              ╰──── Warning: The word `member` is reserved for possible future use. Please consider using another name.
+─────╯
+Warning: [0035]
+     ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/cli/lib.mbt:200:19 ]
+     │
+ 200 │       ClassMethod(method) => {
+     │                   ───┬──  
+     │                      ╰──── Warning: The word `method` is reserved for possible future use. Please consider using another name.
+─────╯
+Warning: [0035]
+     ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/cli/lib.mbt:202:29 ]
+     │
+ 202 │         result.write_string(method.name)
+     │                             ───┬──  
+     │                                ╰──── Warning: The word `method` is reserved for possible future use. Please consider using another name.
+─────╯
+Warning: [0035]
+     ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/cli/lib.mbt:204:50 ]
+     │
+ 204 │         result.write_string(visibility_to_string(method.visibility))
+     │                                                  ───┬──  
+     │                                                     ╰──── Warning: The word `method` is reserved for possible future use. Please consider using another name.
+─────╯
+Warning: [0035]
+     ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/cli/lib.mbt:206:32 ]
+     │
+ 206 │         result.write_string(if method.is_static { "true" } else { "false" })
+     │                                ───┬──  
+     │                                   ╰──── Warning: The word `method` is reserved for possible future use. Please consider using another name.
+─────╯
+Warning: [0035]
+     ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/cli/lib.mbt:208:44 ]
+     │
+ 208 │         result.write_string(params_to_json(method.params))
+     │                                            ───┬──  
+     │                                               ╰──── Warning: The word `method` is reserved for possible future use. Please consider using another name.
+─────╯
+Warning: [0035]
+     ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/cli/lib.mbt:210:42 ]
+     │
+ 210 │         result.write_string(type_to_json(method.return_type))
+     │                                          ───┬──  
+     │                                             ╰──── Warning: The word `method` is reserved for possible future use. Please consider using another name.
+─────╯
+Warning: [0035]
+     ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/cli/lib.mbt:387:13 ]
+     │
+ 387 │       Named(local, imported) => {
+     │             ──┬──  
+     │               ╰──── Warning: The word `local` is reserved for possible future use. Please consider using another name.
+─────╯
+Warning: [0035]
+     ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/cli/lib.mbt:389:48 ]
+     │
+ 389 │         result.write_string(escape_json_string(local))
+     │                                                ──┬──  
+     │                                                  ╰──── Warning: The word `local` is reserved for possible future use. Please consider using another name.
+─────╯
+Warning: [0035]
+    ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/import_export_test.mbt:53:25 ]
+    │
+ 53 │         Named(original, alias) => {
+    │                         ──┬──  
+    │                           ╰──── Warning: The word `alias` is reserved for possible future use. Please consider using another name.
+────╯
+Warning: [0035]
+    ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/import_export_test.mbt:55:17 ]
+    │
+ 55 │           match alias {
+    │                 ──┬──  
+    │                   ╰──── Warning: The word `alias` is reserved for possible future use. Please consider using another name.
+────╯
+Warning: [0035]
+     ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/parser.mbt:956:38 ]
+     │
+ 956 │       self.parse_type_alias().map(fn(alias) { Declaration::TypeAlias(alias) })
+     │                                      ──┬──  
+     │                                        ╰──── Warning: The word `alias` is reserved for possible future use. Please consider using another name.
+─────╯
+Warning: [0035]
+     ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/parser.mbt:956:70 ]
+     │
+ 956 │       self.parse_type_alias().map(fn(alias) { Declaration::TypeAlias(alias) })
+     │                                                                      ──┬──  
+     │                                                                        ╰──── Warning: The word `alias` is reserved for possible future use. Please consider using another name.
+─────╯
+Warning: [0035]
+      ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/parser.mbt:1047:24 ]
+      │
+ 1047 │             Identifier(alias) => {
+      │                        ──┬──  
+      │                          ╰──── Warning: The word `alias` is reserved for possible future use. Please consider using another name.
+──────╯
+Warning: [0035]
+      ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/parser.mbt:1049:20 ]
+      │
+ 1049 │               Some(alias)
+      │                    ──┬──  
+      │                      ╰──── Warning: The word `alias` is reserved for possible future use. Please consider using another name.
+──────╯
+Warning: [0035]
+      ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/parser.mbt:1176:24 ]
+      │
+ 1176 │             Identifier(alias) => {
+      │                        ──┬──  
+      │                          ╰──── Warning: The word `alias` is reserved for possible future use. Please consider using another name.
+──────╯
+Warning: [0035]
+      ╭─[ /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/parser.mbt:1178:20 ]
+      │
+ 1178 │               Some(alias)
+      │                    ──┬──  
+      │                      ╰──── Warning: The word `alias` is reserved for possible future use. Please consider using another name.
+──────╯
+test message from WasmGC
+test mizchi/esmbt/typesrcipt_parser/new_features_test.mbt::parse tuple type failed
+expect test failed at /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/new_features_test.mbt:37:23-37:63
+Diff:
+----
+first is numbertrue
+----
+
+test mizchi/esmbt/typesrcipt_parser/new_features_test.mbt::parse literal types failed
+expect test failed at /home/mizchi/sandbox/study-mbt-20250810/src/typesrcipt_parser/new_features_test.mbt:71:14-71:55
+Diff:
+----
+should be unionfalse
+----
+
+Total tests: 123, passed: 121, failed: 2.

@@ -1,0 +1,48 @@
+{
+  "execution_info": {
+    "timestamp": "2025-08-10T19:12:21.973Z",
+    "timezone": "Asia/Tokyo, UTC+9:00",
+    "workspace": "/home/mizchi/sandbox/study-mbt-20250810"
+  },
+  "moon_test": {
+    "total": 123,
+    "passed": 121,
+    "failed": 2,
+    "skipped": 0
+  },
+  "deno_test": {
+    "total": 1,
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "integration_errors": 12
+  },
+  "failures": [
+    {
+      "suite": "moon",
+      "file_path": "src/typesrcipt_parser/new_features_test.mbt",
+      "test_name": "parse tuple type",
+      "category": ["types", "parser"],
+      "message_excerpt": "expect test failed at line 37:23-37:63 - Diff: first is numbertrue",
+      "stack_excerpt": null
+    },
+    {
+      "suite": "moon",
+      "file_path": "src/typesrcipt_parser/new_features_test.mbt",
+      "test_name": "parse literal types",
+      "category": ["types", "parser"],
+      "message_excerpt": "expect test failed at line 71:14-71:55 - Diff: should be unionfalse",
+      "stack_excerpt": null
+    }
+  ],
+  "integration_test_summary": {
+    "deno_integration_test": {
+      "status": "passed",
+      "description": "Moonbit JS build and type-check integration"
+    },
+    "js_build_errors": {
+      "count": 12,
+      "description": "CommonJS/ESM compatibility issues in generated JS test files"
+    }
+  }
+}

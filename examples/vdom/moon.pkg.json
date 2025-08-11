@@ -1,0 +1,6 @@
+{
+  "import": [
+    "mizchi/esmbt/vdom"
+  ],
+  "is-main": true
+}

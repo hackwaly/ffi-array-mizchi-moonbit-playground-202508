@@ -145,10 +145,66 @@ pub fn parameter_to_moonbit(param : Parameter) -> String {
   }
 }
 
+// TypeScriptの型アノテーションを除去して純粋なJavaScriptコードを生成
+
+///|
+pub fn strip_type_annotations(func : FunctionDeclaration) -> String {
+  let result = StringBuilder::new()
+  
+  // async関数の場合
+  if func.async {
+    result.write_string("async ")
+  }
+  
+  // 関数名
+  result.write_string(func.name)
+  result.write_string("(")
+  
+  // パラメータ（型情報を除去、restとoptionalのマーカーは残す）
+  let param_strs : Array[String] = []
+  for param in func.params {
+    let param_str = StringBuilder::new()
+    
+    // rest parameter
+    if param.rest {
+      param_str.write_string("...")
+    }
+    
+    param_str.write_string(param.name)
+    
+    // デフォルト値がある場合は追加（将来の拡張用）
+    // TODO: パーサーがデフォルト値をサポートしたら実装
+    
+    param_strs.push(param_str.to_string())
+  }
+  
+  result.write_string(param_strs.join(", "))
+  result.write_string(")")
+  
+  result.to_string()
+}
+
+// JavaScriptのインライン実装コードを生成（型アノテーションなし）
+
+///|
+pub fn generate_js_implementation(func : FunctionDeclaration) -> String {
+  let result = StringBuilder::new()
+  
+  // 簡単な実装として、関数シグネチャのみを生成
+  // 実際のTypeScriptコードがある場合は、そこから型を除去する必要があるが、
+  // 現在のASTには実装コードが含まれていないため、関数参照のみを生成
+  result.write_string(strip_type_annotations(func))
+  
+  result.to_string()
+}
+
 // 関数宣言からFFIバインディングを生成
 
 ///|
-pub fn generate_function_binding(func : FunctionDeclaration) -> String {
+pub fn generate_function_binding(
+  func : FunctionDeclaration,
+  ~inline_implementation : Bool = false
+) -> String {
   let result = StringBuilder::new()
 
   // extern宣言
@@ -165,7 +221,19 @@ pub fn generate_function_binding(func : FunctionDeclaration) -> String {
   result.write_string(" = #|")
 
   // JavaScript側の実装
-  result.write_string(func.name)
+  if inline_implementation {
+    // インライン実装の場合、関数全体を生成
+    result.write_string("\n")
+    result.write_string("  ")
+    result.write_string(strip_type_annotations(func))
+    result.write_string(" {\n")
+    result.write_string("    // Implementation would go here\n")
+    result.write_string("  }\n")
+  } else {
+    // 単純な関数参照（既存の実装を参照）
+    result.write_string(func.name)
+  }
+  
   result.write_string("|#\n")
   result.to_string()
 }

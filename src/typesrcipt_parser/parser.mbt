@@ -3,7 +3,7 @@
 ///|
 pub struct Parser {
   lexer : Lexer
-  pub mut current_token : Token
+  mut current_token : Token
   mut peek_token : Token
 }
 
@@ -44,6 +44,147 @@ fn expect_peek(self : Parser, token : Token) -> Bool {
   } else {
     false
   }
+}
+
+// Parse enum declaration
+
+///|
+pub fn parse_enum_declaration(self : Parser) -> Declaration? {
+  let is_const = if self.current_token_is(Token::Const) {
+    self.next_token() // Move past const
+    if not(self.current_token_is(Token::Enum)) {
+      return None
+    }
+    true
+  } else if self.current_token_is(Token::Enum) {
+    false
+  } else {
+    return None
+  }
+  
+  self.next_token() // Move past enum
+  
+  let name = match self.current_token {
+    Identifier(n) => n
+    _ => return None
+  }
+  self.next_token()
+  
+  if not(self.current_token_is(Token::LeftBrace)) {
+    return None
+  }
+  self.next_token() // Move past {
+  
+  let members : Array[EnumMember] = []
+  
+  while not(self.current_token_is(Token::RightBrace)) && not(self.current_token_is(Token::Eof)) {
+    match self.current_token {
+      Identifier(member_name) => {
+        self.next_token()
+        
+        let value = if self.current_token_is(Token::Equals) {
+          self.next_token() // Move past =
+          match self.current_token {
+            StringLiteral(v) | NumberLiteral(v) => {
+              self.next_token()
+              Some(v)
+            }
+            _ => None
+          }
+        } else {
+          None
+        }
+        
+        members.push(EnumMember::{ name: member_name, value })
+        
+        if self.current_token_is(Token::Comma) {
+          self.next_token() // Move past ,
+        }
+      }
+      _ => break
+    }
+  }
+  
+  if not(self.current_token_is(Token::RightBrace)) {
+    return None
+  }
+  self.next_token() // Move past }
+  
+  Some(Declaration::Enum(EnumDeclaration::{ name, is_const, members }))
+}
+
+// Parse namespace declaration
+
+///|
+pub fn parse_namespace_declaration(self : Parser) -> Declaration? {
+  if not(self.current_token_is(Token::Namespace)) {
+    return None
+  }
+  self.next_token() // Move past namespace
+  
+  let name = match self.current_token {
+    Identifier(n) => n
+    _ => return None
+  }
+  self.next_token()
+  
+  if not(self.current_token_is(Token::LeftBrace)) {
+    return None
+  }
+  self.next_token() // Move past {
+  
+  let declarations : Array[Declaration] = []
+  
+  while not(self.current_token_is(Token::RightBrace)) && not(self.current_token_is(Token::Eof)) {
+    match self.parse_declaration() {
+      Some(decl) => declarations.push(decl)
+      None => self.next_token() // Skip unknown token
+    }
+  }
+  
+  if not(self.current_token_is(Token::RightBrace)) {
+    return None
+  }
+  self.next_token() // Move past }
+  
+  Some(Declaration::Namespace(NamespaceDeclaration::{ name, declarations, declare: false }))
+}
+
+// Parse module declaration
+
+///|
+pub fn parse_module_declaration(self : Parser) -> Declaration? {
+  if not(self.current_token_is(Token::Module)) {
+    return None
+  }
+  self.next_token() // Move past module
+  
+  let name = match self.current_token {
+    StringLiteral(n) | Identifier(n) => n
+    _ => return None
+  }
+  self.next_token()
+  
+  if not(self.current_token_is(Token::LeftBrace)) {
+    return None
+  }
+  self.next_token() // Move past {
+  
+  let declarations : Array[Declaration] = []
+  
+  while not(self.current_token_is(Token::RightBrace)) && not(self.current_token_is(Token::Eof)) {
+    match self.parse_declaration() {
+      Some(decl) => declarations.push(decl)
+      None => self.next_token() // Skip unknown token
+    }
+  }
+  
+  if not(self.current_token_is(Token::RightBrace)) {
+    return None
+  }
+  self.next_token() // Move past }
+  
+  Some(Declaration::Module(ModuleDeclaration::{ name, declarations, declare: false }))
 }
 
 // Parse a simple type
@@ -998,8 +1139,11 @@ pub fn parse_declaration(self : Parser) -> Declaration? {
       .map(fn(func) { Declaration::Function(func) })
     Class => self.parse_class().map(fn(cls) { Declaration::Class(cls) })
     Type =>
-      self.parse_type_alias().map(fn(alias) { Declaration::TypeAlias(alias) })
+      self.parse_type_alias().map(fn(type_alias) { Declaration::TypeAlias(type_alias) })
     Const | Let | Var => self.parse_variable_declaration()
+    Enum => self.parse_enum_declaration()
+    Namespace => self.parse_namespace_declaration()
+    Module => self.parse_module_declaration()
     Export => self.parse_export_declaration()
     Import => self.parse_import_declaration()
     _ => None
@@ -1089,9 +1233,9 @@ fn parse_named_exports(self : Parser) -> Declaration? {
         let exported = if self.current_token_is(Token::As) {
           self.next_token() // Move past as
           match self.current_token {
-            Identifier(alias) => {
+            Identifier(alias_name) => {
               self.next_token()
-              Some(alias)
+              Some(alias_name)
             }
             _ => None
           }
@@ -1141,7 +1285,7 @@ fn parse_import_declaration(self : Parser) -> Declaration? {
   let specifiers : Array[ImportSpecifier] = []
 
   // Check for import type (TypeScript)
-  let is_type_import = if self.current_token_is(Token::Type) {
+  let is_type_only = if self.current_token_is(Token::Type) {
     self.next_token()
     true
   } else {
@@ -1195,7 +1339,7 @@ fn parse_import_declaration(self : Parser) -> Declaration? {
     StringLiteral(source) => source
     _ => return None
   }
-  Some(Declaration::Import(ImportDeclaration::{ specifiers, from }))
+  Some(Declaration::Import(ImportDeclaration::{ specifiers, from, is_type_only }))
 }
 
 // Helper to parse named imports
@@ -1218,9 +1362,9 @@ fn parse_named_imports(
         let imported = if self.current_token_is(Token::As) {
           self.next_token() // Move past as
           match self.current_token {
-            Identifier(alias) => {
+            Identifier(alias_name) => {
               self.next_token()
-              Some(alias)
+              Some(alias_name)
             }
             _ => None
           }

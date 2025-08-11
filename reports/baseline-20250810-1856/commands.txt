@@ -1,0 +1,20 @@
+# TypeScript Parser ベースライン計測実行コマンド一覧
+# 実行日時: 2025-08-10 19:12:21 JST
+# 実行環境: Linux 6.6, moon 0.1.20250801, deno 2.4.2
+
+## 1. MoonBit CLI動作確認
+moon version
+
+## 2. MoonBitテスト実行（全パッケージ対象）
+moon test 2>&1 | tee reports/baseline-20250810-1856/moon-test.raw.log
+
+## 3. Deno CLI動作確認
+deno --version
+
+## 4. Denoテスト実行（統合テスト含む）
+deno test -A 2>&1 | tee reports/baseline-20250810-1856/deno-test.raw.log
+
+## 備考
+- MoonBitテスト: 123件中121件成功、2件失敗
+- Denoテスト: 1件成功、12件JSビルドエラー（CommonJS/ESM互換性問題）
+- すべてのログは reports/baseline-20250810-1856/ ディレクトリに保存済み
