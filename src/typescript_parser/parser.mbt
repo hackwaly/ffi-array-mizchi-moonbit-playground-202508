@@ -773,6 +773,7 @@ pub fn parse_function_declaration(self : Parser) -> FunctionDeclaration? {
     params,
     return_type,
     declare: is_declare,
+    is_async: false,
   })
 }
 
@@ -1431,6 +1432,7 @@ fn parse_variable_declaration(self : Parser) -> Declaration? {
       params: [],
       return_type: var_type,
       declare: false,
+      is_async: false,
     }),
   )
 }

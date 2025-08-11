@@ -101,6 +101,7 @@ pub struct FunctionDeclaration {
   params : Array[Parameter]
   return_type : Type
   declare : Bool
+  is_async : Bool
 }
 
 pub struct ClassDeclaration {

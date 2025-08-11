@@ -152,7 +152,7 @@ pub fn strip_type_annotations(func : FunctionDeclaration) -> String {
   let result = StringBuilder::new()
   
   // async関数の場合
-  if func.async {
+  if func.is_async {
     result.write_string("async ")
   }
   

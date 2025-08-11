@@ -8,8 +8,8 @@ test "strip_type_annotations_simple_function" {
       Parameter::{ name: "b", type_: Type::Number, optional: false, rest: false }
     ],
     return_type: Type::Number,
-    type_params: [],
-    async: false
+    declare: false,
+    is_async: false
   }
   
   let result = strip_type_annotations(func)
@@ -23,12 +23,12 @@ test "strip_type_annotations_async_function" {
       Parameter::{ name: "url", type_: String, optional: false, rest: false }
     ],
     return_type: TypeReference("Promise", [String]),
-    type_params: [],
-    async: true
+    declare: false,
+    is_async: true
   }
   
   let result = strip_type_annotations(func)
-  expect(result).to_equal("async fetchData(url)")
+  inspect(result, content="async fetchData(url)")
 }
 
 test "strip_type_annotations_rest_parameter" {
@@ -38,12 +38,12 @@ test "strip_type_annotations_rest_parameter" {
       Parameter::{ name: "numbers", type_: Number, optional: false, rest: true }
     ],
     return_type: Number,
-    type_params: [],
-    async: false
+    declare: false,
+    is_async: false
   }
   
   let result = strip_type_annotations(func)
-  expect(result).to_equal("sum(...numbers)")
+  inspect(result, content="sum(...numbers)")
 }
 
 test "strip_type_annotations_optional_parameter" {
@@ -54,14 +54,14 @@ test "strip_type_annotations_optional_parameter" {
       Parameter::{ name: "title", type_: String, optional: true, rest: false }
     ],
     return_type: String,
-    type_params: [],
-    async: false
+    declare: false,
+    is_async: false
   }
   
   // Note: 現在の実装ではoptionalマーカーは除去されるが、
   // JavaScriptでは関数の引数はすべてoptionalなので問題ない
   let result = strip_type_annotations(func)
-  expect(result).to_equal("greet(name, title)")
+  inspect(result, content="greet(name, title)")
 }
 
 test "generate_function_binding_with_inline_implementation" {
@@ -72,8 +72,8 @@ test "generate_function_binding_with_inline_implementation" {
       Parameter::{ name: "y", type_: Number, optional: false, rest: false }
     ],
     return_type: Number,
-    type_params: [],
-    async: false
+    declare: false,
+    is_async: false
   }
   
   let binding = generate_function_binding(func, inline_implementation=true)
@@ -90,8 +90,8 @@ test "generate_function_binding_reference_only" {
       Parameter::{ name: "b", type_: Number, optional: false, rest: false }
     ],
     return_type: Number,
-    type_params: [],
-    async: false
+    declare: false,
+    is_async: false
   }
   
   let binding = generate_function_binding(func, inline_implementation=false)
