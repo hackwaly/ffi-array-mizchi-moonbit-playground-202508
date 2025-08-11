@@ -2,6 +2,7 @@
 // This file exports functions to be called from JavaScript/TypeScript
 
 // Parse TypeScript code and return AST as JSON
+
 ///|
 pub fn parse_typescript(code : String) -> String {
   let lexer = @typescript_parser.Lexer::new(code)
@@ -25,7 +26,9 @@ pub fn generate_ffi(code : String) -> String {
 // Helper function to convert declarations to JSON
 
 ///|
-fn declarations_to_json(declarations : Array[@typescript_parser.Declaration]) -> String {
+fn declarations_to_json(
+  declarations : Array[@typescript_parser.Declaration],
+) -> String {
   let result = StringBuilder::new()
   result.write_string("[")
   for i, decl in declarations {
@@ -151,14 +154,16 @@ fn string_array_to_json(arr : Array[String]) -> String {
 // Convert interface members to JSON
 
 ///|
-fn members_to_json(members : Array[@typescript_parser.InterfaceMember]) -> String {
+fn members_to_json(
+  members : Array[@typescript_parser.InterfaceMember],
+) -> String {
   let result = StringBuilder::new()
   result.write_string("[")
-  for i, member in members {
+  for i, mbr in members {
     if i > 0 {
       result.write_string(",")
     }
-    match member {
+    match mbr {
       Property(prop) => {
         result.write_string("{\"type\":\"property\",\"name\":\"")
         result.write_string(prop.name)
@@ -178,14 +183,16 @@ fn members_to_json(members : Array[@typescript_parser.InterfaceMember]) -> Strin
 // Convert class members to JSON
 
 ///|
-fn class_members_to_json(members : Array[@typescript_parser.ClassMember]) -> String {
+fn class_members_to_json(
+  members : Array[@typescript_parser.ClassMember],
+) -> String {
   let result = StringBuilder::new()
   result.write_string("[")
-  for i, member in members {
+  for i, mbr in members {
     if i > 0 {
       result.write_string(",")
     }
-    match member {
+    match mbr {
       ClassProperty(prop) => {
         result.write_string("{\"type\":\"property\",\"name\":\"")
         result.write_string(prop.name)
@@ -197,17 +204,17 @@ fn class_members_to_json(members : Array[@typescript_parser.ClassMember]) -> Str
         result.write_string(type_to_json(prop.type_))
         result.write_string("}")
       }
-      ClassMethod(method) => {
+      ClassMethod(meth) => {
         result.write_string("{\"type\":\"method\",\"name\":\"")
-        result.write_string(method.name)
+        result.write_string(meth.name)
         result.write_string("\",\"visibility\":\"")
-        result.write_string(visibility_to_string(method.visibility))
+        result.write_string(visibility_to_string(meth.visibility))
         result.write_string("\",\"static\":")
-        result.write_string(if method.is_static { "true" } else { "false" })
+        result.write_string(if meth.is_static { "true" } else { "false" })
         result.write_string(",\"params\":")
-        result.write_string(params_to_json(method.params))
+        result.write_string(params_to_json(meth.params))
         result.write_string(",\"returnType\":")
-        result.write_string(type_to_json(method.return_type))
+        result.write_string(type_to_json(meth.return_type))
         result.write_string("}")
       }
       ClassConstructor(ctor) => {
@@ -384,9 +391,9 @@ fn import_specifiers_to_json(
         result.write_string(escape_json_string(name))
         result.write_string("\"}")
       }
-      Named(local, imported) => {
+      Named(loc, imported) => {
         result.write_string("{\"type\":\"named\",\"local\":\"")
-        result.write_string(escape_json_string(local))
+        result.write_string(escape_json_string(loc))
         result.write_string("\"")
         match imported {
           Some(name) => {
