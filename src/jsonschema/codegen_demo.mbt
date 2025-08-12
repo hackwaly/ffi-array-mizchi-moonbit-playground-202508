@@ -120,7 +120,7 @@ fn demo_generate_union_type() -> Unit {
   println(generated_code)
 }
 
-fn main {
+test "codegen_demo" {
   println("JSON Schema to MoonBit Code Generator Demo")
   println("==================================================")
   println("")
