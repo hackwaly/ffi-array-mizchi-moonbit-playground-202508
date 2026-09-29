@@ -42,7 +42,11 @@ pub fn User::isActive(self : User) -> Bool {
 // Note: This is commented out for wasm-gc compatibility
 // extern "js" fn createUser(name : String, email : String) -> User = #|createUser|#
 // extern "js" fn fetchUser(id : UserID) -> Promise[User] = #|fetchUser|#
-// extern "js" fn getAllUsers() -> Array[User] = #|getAllUsers|#
+// extern "js" fn getAllUsers_ffi() -> FixedArray[User] = #|getAllUsers|#
+
+fn getAllUsers() -> Array[User] {
+  Array::from_fixed_array(getAllUsers_ffi())
+}
 
 // Mock implementations for type checking
 pub fn createUser(name : String, email : String) -> User {

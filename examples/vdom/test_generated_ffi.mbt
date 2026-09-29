@@ -43,7 +43,11 @@ extern "js" fn createUser(name : String, email : String) -> User = #|createUser|
 
 extern "js" fn fetchUser(id : UserID) -> Promise[User] = #|fetchUser|#
 
-extern "js" fn getAllUsers() -> Array[User] = #|getAllUsers|#
+extern "js" fn getAllUsers_ffi() -> FixedArray[User] = #|getAllUsers|#
+
+fn getAllUsers() -> Array[User] {
+  Array::from_fixed_array(getAllUsers_ffi())
+}
 
 // Test function to verify type checking
 pub fn test_js_ffi() -> Unit {
